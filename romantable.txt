@@ -27,13 +27,13 @@ vk	ゔぇ
 vq	ゔょ
 '	っ		DisplayAmbiguousResult
 l	z		DisplayAmbiguousResult
-f	k		DisplayAmbiguousResult
-ff	f		DisplayAmbiguousResult
-fy	きゃ
-fx	きぃ
-fz	きゅ
-fk	きぇ
-fq	きょ
+f		k
+kf	f		DisplayAmbiguousResult
+ky	きゃ
+kx	きぃ
+kz	きゅ
+kk	きぇ
+kq	きょ
 gy	ぎゃ
 gx	ぎぃ
 gz	ぎゅ
@@ -114,14 +114,14 @@ px	ぴぃ
 pz	ぴゅ
 pk	ぴぇ
 pq	ぴょ
-ffa	ふぁ
-ffi	ふぃ
-ffe	ふぇ
-ffu	ふ
-ffo	ふぉ
-ffy	ふゃ
-ffz	ふゅ
-ffq	ふょ
+kfa	ふぁ
+kfi	ふぃ
+kfe	ふぇ
+kfu	ふ
+kfo	ふぉ
+kfy	ふゃ
+kfz	ふゅ
+kfq	ふょ
 hwa	ふぁ
 hwi	ふぃ
 hwu	ふ
@@ -158,11 +158,11 @@ xo	ぉ
 'u	ぅ
 'e	ぇ
 'o	ぉ
-fa	か
-fi	き
-fu	く
-fe	け
-fo	こ
+ka	か
+ki	き
+ku	く
+ke	け
+ko	こ
 xf	ヵ		DisplayAmbiguousResult
 xfe	ヶ
 ga	が
@@ -175,11 +175,11 @@ si	し
 su	す
 se	せ
 so	そ
-fwa	くぁ
-fwi	くぃ
-fwu	くぅ
-fwe	くぇ
-fwo	くぉ
+kwa	くぁ
+kwi	くぃ
+kwu	くぅ
+kwe	くぇ
+kwo	くぉ
 gwa	ぐぁ
 gwi	ぐぃ
 gwu	ぐぅ
@@ -266,7 +266,7 @@ who	うぉ
 ms	ます		DisplayAmbiguousResult
 mst	ました
 msn	ません
-ft	こと
+kt	こと
 sr	する		DisplayAmbiguousResult
 srr	される		DisplayAmbiguousResult
 srra	するら
@@ -304,10 +304,10 @@ smsf	しますか
 smsg	しますが
 smsn	しません
 smst	しました
-fr	これ
-fm	かも
-fn	かな
-fd	けど
+kr	これ
+km	かも
+kn	かな
+kd	けど
 nm	にも
 nh	のは
 nd	ので		DisplayAmbiguousResult
