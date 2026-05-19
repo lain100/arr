@@ -274,11 +274,11 @@ srri	するり
 srru	するる
 srre	するれ
 srro	するろ
-rsry	するりゃ
-rsrx	するりぃ
-rsrz	するりゅ
-rsrk	するりぇ
-rsrq	するりょ
+srry	するりゃ
+srrx	するりぃ
+srrz	するりゅ
+srrk	するりぇ
+srrq	するりょ
 srt	された		DisplayAmbiguousResult
 srtr	されている
 srta	するた
@@ -286,11 +286,11 @@ srti	するち
 srtu	するつ
 srte	するて
 srto	すると
-rsty	するちゃ
-rstx	するちぃ
-rstz	するちゅ
-rstk	するちぇ
-rstq	するちょ
+srty	するちゃ
+srtx	するちぃ
+srtz	するちゅ
+srtk	するちぇ
+srtq	するちょ
 srtm	するため
 srlr	それぞれ
 ss	させ
