@@ -327,9 +327,9 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 enum combos {
 	CMB_INT4,
-	CMB_CAPS,
-	CMB_LNG2,
 	CMB_LNG1,
+	CMB_LNG2,
+	CMB_CAPS,
 	CMB_MS_BTN1,
 	CMB_MS_BTN2,
 	CMB_MS_BTN3,
@@ -337,10 +337,10 @@ enum combos {
 	CMB_MORPH_TAB,
 };
 
-const uint16_t PROGMEM cmb_int4[] = {KC_C, KC_W, COMBO_END};
-const uint16_t PROGMEM cmb_caps[] = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM cmb_int4[] = {KC_L, KC_W, COMBO_END};
+const uint16_t PROGMEM cmb_lng1[] = {KC_D, KC_M, COMBO_END};
 const uint16_t PROGMEM cmb_lng2[] = {KC_M, KC_F, COMBO_END};
-const uint16_t PROGMEM cmb_lng1[] = {KC_L, KC_V, COMBO_END};
+const uint16_t PROGMEM cmb_caps[] = {KC_D, KC_F, COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_N), LCTL_T(KC_T), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn2[] = {LALT_T(KC_S), LSFT_T(KC_N), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn3[] = {LALT_T(KC_S), LCTL_T(KC_T), COMBO_END};
@@ -349,9 +349,9 @@ const uint16_t PROGMEM cmb_morph_tab[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_EN
 
 combo_t key_combos[] = {
 	[CMB_INT4] = COMBO(cmb_int4, KC_INT4),
-	[CMB_CAPS] = COMBO(cmb_caps, KC_CAPS),
-	[CMB_LNG2] = COMBO(cmb_lng2, KC_LNG2),
 	[CMB_LNG1] = COMBO(cmb_lng1, KC_LNG1),
+	[CMB_LNG2] = COMBO(cmb_lng2, KC_LNG2),
+	[CMB_CAPS] = COMBO(cmb_caps, KC_CAPS),
 	[CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
 	[CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
 	[CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
@@ -385,6 +385,14 @@ bool caps_word_press_user(uint16_t keycode) {
 			return true;
 	}
 	return false;
+}
+
+uint16_t get_combo_term(uint16_t combo_index, combo_t* combo) {
+	switch (combo_index) {
+		case CMB_CAPS_WORD:
+			return COMBO_TERM - 20;
+	}
+	return COMBO_TERM;
 }
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
