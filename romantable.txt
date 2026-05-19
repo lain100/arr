@@ -167,6 +167,8 @@ ke	け
 ko	こ
 xf	ヵ		DisplayAmbiguousResult
 xfe	ヶ
+llf	ヵ		DisplayAmbiguousResult
+llfe	ヶ
 ga	が
 gi	ぎ
 gu	ぐ
