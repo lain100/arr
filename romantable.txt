@@ -25,8 +25,9 @@ vx	ゔぃ
 vz	ゔゅ
 vk	ゔぇ
 vq	ゔょ
-'	っ		DisplayAmbiguousResult
+'	っ
 l	z		DisplayAmbiguousResult
+ll	l		DisplayAmbiguousResult
 f		k
 kf	f		DisplayAmbiguousResult
 ky	きゃ
@@ -140,6 +141,7 @@ rx	りぃ
 rz	りゅ
 rk	りぇ
 rq	りょ
+xn	ん
 n'	ん
 c	ん
 a	あ
@@ -153,11 +155,11 @@ xi	ぃ
 xu	ぅ
 xe	ぇ
 xo	ぉ
-'a	ぁ
-'i	ぃ
-'u	ぅ
-'e	ぇ
-'o	ぉ
+lla	ぁ
+lli	ぃ
+llu	ぅ
+lle	ぇ
+llo	ぉ
 ka	か
 ki	き
 ku	く
@@ -237,15 +239,15 @@ mi	み
 mu	む
 me	め
 mo	も
-'y	ゃ
+lly	ゃ
 xy	ゃ
 y	や
 wx	ゐ
-'z	ゅ
+llz	ゅ
 xz	ゅ
 z	ゆ
 wk	ゑ
-'q	ょ
+llq	ょ
 xq	ょ
 q	よ
 ra	ら
