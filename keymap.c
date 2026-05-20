@@ -140,7 +140,12 @@ void roll_taps_processed(uint16_t keycode) {
 #define LAYER_CYCLE_START 0
 #define LAYER_CYCLE_END   4
 
-bool tab_morphed = false;
+enum arrowkeys_morph {
+	VOL_MORPH = 1,
+	WWW_MORPH,
+	TAB_MORPH,
+};
+uint16_t morph_type = 0;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
@@ -184,43 +189,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 	mts_mods_on();
 
 	switch (keycode) {
-		case KC_F20:
-			if (record->event.pressed) {
-				uint8_t current_layer = get_highest_layer(layer_state);
-
-				if (current_layer > LAYER_CYCLE_END || current_layer < LAYER_CYCLE_START) {
-					return false;
-				}
-				uint8_t next_layer = current_layer + 1;
-
-				if (next_layer > LAYER_CYCLE_END) {
-					next_layer = LAYER_CYCLE_START;
-				}
-				layer_move(next_layer);
-			}
-			return false;
-		case LT(2, KC_SPC):
-			static bool tab_registered = false;
-			static bool is_ctrl_alt_tab = false;
-
-			if (!record->tap.count) {
-				layer_clear();
-				if (!record->event.pressed) {
-					unregister_mods(MOD_LSFT | MOD_LCTL);
-					if (is_ctrl_alt_tab) {
-						tap_code(KC_ENT);
-						is_ctrl_alt_tab = false;
-					}
-					if (tab_morphed) {
-						if (tab_registered) {
-							unregister_code(KC_TAB);
-							tab_registered = false;
-						}
-						tab_morphed = false;
-					}
-				}
-			}
-			break;
 		case LT(0, KC_F15):
 			if (record->event.pressed) {
 				if (record->tap.count) {
@@ -233,8 +201,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			} else if (!record->tap.count) {
 				unregister_code(KC_Z);
 			}
-			return false;
+			break;
 		case LT(0, KC_F16):
+			static bool is_ctrl_alt_tab = false;
+			
 			if (record->event.pressed) {
 				if (record->tap.count) {
 					add_weak_mods(MOD_LCTL | MOD_LALT);
@@ -247,7 +217,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			} else if (!record->tap.count) {
 				unregister_code(KC_Y);
 			}
-			return false;
+			break;
 		case LT(0, KC_F17):
 			if (record->event.pressed) {
 				if (record->tap.count) {
@@ -269,7 +239,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 					} else {
 						register_mods(MOD_LCTL);
 					}
-					tab_morphed ^= true;
+					morph_type = (morph_type == TAB_MORPH) ? 0 : TAB_MORPH;
 				} else {
 					tap_code(KC_F16);
 				}
@@ -280,31 +250,66 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 				tap_code(record->tap.count ? KC_PSCR : KC_APP);
 			}
 			break;
+		case KC_F20:
+			if (record->event.pressed) {
+				uint8_t current_layer = get_highest_layer(layer_state);
+
+				if (current_layer > LAYER_CYCLE_END || current_layer < LAYER_CYCLE_START) {
+					return false;
+				}
+				uint8_t next_layer = current_layer + 1;
+
+				if (next_layer > LAYER_CYCLE_END) {
+					next_layer = LAYER_CYCLE_START;
+				}
+				layer_move(next_layer);
+			}
+			return false;
 		case KC_LEFT:
 		case KC_RGHT:
+			static bool arrowkeys_registered = false;
+			static uint16_t morph_code = 0;
+			
+			switch (morph_type) {
+				case VOL_MORPH:
+					morph_code = (keycode == KC_LEFT) ?
+						KC_VOLD : KC_VOLU;
+					break;
+				case WWW_MORPH:
+					morph_code = (keycode == KC_LEFT) ?
+						KC_WBAK : KC_WFWD;
+					break;
+				case TAB_MORPH:
+					if (record->event.pressed &&
+						keycode == KC_LEFT) {
+						add_weak_mods(MOD_LSFT);
+					}
+					morph_code = KC_TAB;
+					break;
+				default:
+					return true;
+			}
+			if (record->event.pressed) {
+				register_code(morph_code);
+				arrowkeys_registered = true;
+			} else if (arrowkeys_registered) {
+				unregister_code(morph_code);
+				arrowkeys_registered = false;
+			}
+			return false;
 		case KC_BSPC:
 		case KC_COMM:
 			static bool bspc_registered = false;
 			static bool comm_registered = false;
-			bool predicate = tab_morphed;
-			bool *registered = &tab_registered;
-			uint16_t code = KC_TAB;
-			uint8_t mod_state = get_mods();
-
-			if (keycode == KC_BSPC || keycode == KC_COMM) {
-				predicate = mod_state & MOD_MASK_SHIFT;
-				registered = (keycode == KC_BSPC) ?
+			bool *registered = (keycode == KC_BSPC) ?
 					&bspc_registered : &comm_registered;
-				code = (keycode == KC_BSPC) ?
+			uint16_t code = (keycode == KC_BSPC) ?
 					KC_DEL : KC_DOT;
-			}
+			uint8_t mod_state = get_mods();
+			
 			if (record->event.pressed) {
-				if (predicate) {
-					if (code != KC_TAB) {
-						del_mods(MOD_MASK_SHIFT);
-					} else if (keycode == KC_LEFT) {
-						add_weak_mods(MOD_LSFT);
-					}
+				if (mod_state & MOD_MASK_SHIFT) {
+					del_mods(MOD_MASK_SHIFT);
 					register_code(code);
 					*registered = true;
 					set_mods(mod_state);
@@ -314,6 +319,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 				unregister_code(code);
 				*registered = false;
 				return false;
+			}
+			break;
+		case LT(2, KC_SPC):
+			if (!record->tap.count) {
+				if (!record->event.pressed) {
+					unregister_mods(MOD_LSFT | MOD_LCTL);
+					if (is_ctrl_alt_tab) {
+						tap_code(KC_ENT);
+						is_ctrl_alt_tab = false;
+					}
+					if (morph_type) {
+						if (arrowkeys_registered) {
+							unregister_code(morph_code);
+							arrowkeys_registered = false;
+						}
+						morph_type = 0;
+					}
+				}
+				layer_clear();
 			}
 	}
 	return true;
@@ -334,7 +358,9 @@ enum combos {
 	CMB_MS_BTN2,
 	CMB_MS_BTN3,
 	CMB_CAPS_WORD,
-	CMB_MORPH_TAB,
+	CMB_VOL_MORPH,
+	CMB_WWW_MORPH,
+	CMB_TAB_MORPH,
 };
 
 const uint16_t PROGMEM cmb_int4[] = {KC_L, KC_W, COMBO_END};
@@ -345,7 +371,9 @@ const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_N), LCTL_T(KC_T), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn2[] = {LALT_T(KC_S), LSFT_T(KC_N), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn3[] = {LALT_T(KC_S), LCTL_T(KC_T), COMBO_END};
 const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_N), RSFT_T(KC_A), COMBO_END};
-const uint16_t PROGMEM cmb_morph_tab[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_END};
+const uint16_t PROGMEM cmb_vol_morph[] = {LT(0, KC_F16), LT(0, KC_F17), COMBO_END};
+const uint16_t PROGMEM cmb_www_morph[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_END};
+const uint16_t PROGMEM cmb_tab_morph[] = {LT(0, KC_F17), LT(0, KC_F18), COMBO_END};
 
 combo_t key_combos[] = {
 	[CMB_INT4] = COMBO(cmb_int4, KC_INT4),
@@ -356,17 +384,25 @@ combo_t key_combos[] = {
 	[CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
 	[CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
 	[CMB_CAPS_WORD] = COMBO_ACTION(cmb_caps_word),
-	[CMB_MORPH_TAB] = COMBO_ACTION(cmb_morph_tab),
+	[CMB_VOL_MORPH] = COMBO_ACTION(cmb_vol_morph),
+	[CMB_WWW_MORPH] = COMBO_ACTION(cmb_www_morph),
+	[CMB_TAB_MORPH] = COMBO_ACTION(cmb_tab_morph),
 };
 
 void process_combo_event(uint16_t combo_index, bool pressed) {
 	if (pressed) {
 		switch (combo_index) {
-			case CMB_MORPH_TAB:
-				tab_morphed ^= true;
-			break;
 			case CMB_CAPS_WORD:
-					caps_word_on();
+				caps_word_on();
+				break;
+			case CMB_VOL_MORPH:
+				morph_type = (morph_type == VOL_MORPH) ? 0 : VOL_MORPH;
+				break;
+			case CMB_WWW_MORPH:
+				morph_type = (morph_type == WWW_MORPH) ? 0 : WWW_MORPH;
+				break;
+			case CMB_TAB_MORPH:
+				morph_type = (morph_type == TAB_MORPH) ? 0 : TAB_MORPH;
 		}
 	}
 }
