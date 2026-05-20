@@ -204,7 +204,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			break;
 		case LT(0, KC_F16):
 			static bool is_ctrl_alt_tab = false;
-			
+
 			if (record->event.pressed) {
 				if (record->tap.count) {
 					add_weak_mods(MOD_LCTL | MOD_LALT);
@@ -251,25 +251,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			}
 			break;
 		case KC_F20:
-			if (record->event.pressed) {
-				uint8_t current_layer = get_highest_layer(layer_state);
+			static uint16_t cycle = LAYER_CYCLE_END - LAYER_CYCLE_START + 1;
 
-				if (current_layer > LAYER_CYCLE_END || current_layer < LAYER_CYCLE_START) {
+			if (record->event.pressed) {
+				if (cycle <= 1) {
+					layer_move(LAYER_CYCLE_END);
 					return false;
 				}
-				uint8_t next_layer = current_layer + 1;
+				uint16_t dist = get_highest_layer(layer_state) - LAYER_CYCLE_START + 1;
 
-				if (next_layer > LAYER_CYCLE_END) {
-					next_layer = LAYER_CYCLE_START;
-				}
-				layer_move(next_layer);
+				layer_move(LAYER_CYCLE_START + (dist % cycle + cycle) % cycle);
 			}
 			return false;
 		case KC_LEFT:
 		case KC_RGHT:
 			static bool arrowkeys_registered = false;
 			static uint16_t morph_code = 0;
-			
+
 			switch (morph_type) {
 				case VOL_MORPH:
 					morph_code = (keycode == KC_LEFT) ?
@@ -306,7 +304,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			uint16_t code = (keycode == KC_BSPC) ?
 					KC_DEL : KC_DOT;
 			uint8_t mod_state = get_mods();
-			
+
 			if (record->event.pressed) {
 				if (mod_state & MOD_MASK_SHIFT) {
 					del_mods(MOD_MASK_SHIFT);
