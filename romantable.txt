@@ -311,6 +311,18 @@ ssrk	させりぇ
 ssrq	させりょ
 ssrr	させられ		DisplayAmbiguousResult
 ssrrr	させられる
+sst	させた		DisplayAmbiguousResult
+ssta	させた
+ssti	させち
+sstu	させつ
+sste	させて
+ssto	させと
+ssty	させちゃ
+sstx	させちぃ
+sstz	させちゅ
+sstk	させちぇ
+sstq	させちょ
+sstm	させても
 st	して
 sn	しな		DisplayAmbiguousResult
 snfr	しなけれ
@@ -391,6 +403,17 @@ rrrx	られりぃ
 rrrz	られりゅ
 rrrk	られりぇ
 rrrq	られりょ
+rrt	られた		DisplayAmbiguousResult
+rrta	られた
+rrti	られち
+rrtu	られつ
+rrte	られて
+rrto	られと
+rrty	られちゃ
+rrtx	られちぃ
+rrtz	られちゅ
+rrtk	られちぇ
+rrtq	られちょ
 rrtm	られても
 rb	れば
 rt	れて
