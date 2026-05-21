@@ -278,22 +278,12 @@ srri	されり
 srru	される
 srre	されれ
 srro	されろ
-srry	されりゃ
-srrx	されりぃ
-srrz	されりゅ
-srrk	されりぇ
-srrq	されりょ
 srt	された		DisplayAmbiguousResult
 srta	された
 srti	されち
 srtu	されつ
 srte	されて
 srto	されと
-srty	されちゃ
-srtx	されちぃ
-srtz	されちゅ
-srtk	されちぇ
-srtq	されちょ
 srtr	されている
 srtm	するため
 srlr	それぞれ
@@ -304,11 +294,6 @@ ssri	させり
 ssru	させる
 ssre	させれ
 ssro	させろ
-ssry	させりゃ
-ssrx	させりぃ
-ssrz	させりゅ
-ssrk	させりぇ
-ssrq	させりょ
 ssrr	させられ		DisplayAmbiguousResult
 ssrrr	させられる
 sst	させた		DisplayAmbiguousResult
@@ -317,11 +302,6 @@ ssti	させち
 sstu	させつ
 sste	させて
 ssto	させと
-ssty	させちゃ
-sstx	させちぃ
-sstz	させちゅ
-sstk	させちぇ
-sstq	させちょ
 sstm	させても
 st	して
 sn	しな		DisplayAmbiguousResult
@@ -340,11 +320,6 @@ krri	これり
 krru	これる
 krre	これれ
 krro	これろ
-krry	これりゃ
-krrx	これりぃ
-krrz	これりゅ
-krrk	これりぇ
-krrq	これりょ
 km	かも
 kn	かな
 kd	けど
@@ -381,11 +356,6 @@ nrli	なるじ
 nrlu	なるず
 nrle	なるぜ
 nrlo	なるぞ
-nrly	なるじゃ
-nrlx	なるじぃ
-nrlz	なるじゅ
-nrlk	なるじぇ
-nrlq	なるじょ
 nrms	なります
 nb	ねば
 nf	なか
@@ -398,22 +368,12 @@ rrri	られり
 rrru	られる
 rrre	られれ
 rrro	られろ
-rrry	られりゃ
-rrrx	られりぃ
-rrrz	られりゅ
-rrrk	られりぇ
-rrrq	られりょ
 rrt	られた		DisplayAmbiguousResult
 rrta	られた
 rrti	られち
 rrtu	られつ
 rrte	られて
 rrto	られと
-rrty	られちゃ
-rrtx	られちぃ
-rrtz	られちゅ
-rrtk	られちぇ
-rrtq	られちょ
 rrtm	られても
 rb	れば
 rt	れて
@@ -431,11 +391,6 @@ wrli	われじ
 wrlu	われず
 wrle	われぜ
 wrlo	われぞ
-wrly	われじゃ
-wrlx	われじぃ
-wrlz	われじゅ
-wrlk	われじぇ
-wrlq	われじょ
 ns	なし		DisplayAmbiguousResult
 nstm	にしても
 nt	にち
