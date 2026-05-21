@@ -271,30 +271,28 @@ ms	ます		DisplayAmbiguousResult
 mst	ました
 msn	ません
 kt	こと
-sr	する		DisplayAmbiguousResult
+sr	され		DisplayAmbiguousResult
 srr	される		DisplayAmbiguousResult
-srra	するら
-srri	するり
-srru	するる
-srre	するれ
-srro	するろ
-srry	するりゃ
-srrx	するりぃ
-srrz	するりゅ
-srrk	するりぇ
-srrq	するりょ
+srra	されら
+srri	されり
+srre	されれ
+srro	されろ
+srry	されりゃ
+srrx	されりぃ
+srrz	されりゅ
+srrk	されりぇ
+srrq	されりょ
 srt	された		DisplayAmbiguousResult
 srtr	されている
-srta	するた
-srti	するち
-srtu	するつ
-srte	するて
-srto	すると
-srty	するちゃ
-srtx	するちぃ
-srtz	するちゅ
-srtk	するちぇ
-srtq	するちょ
+srti	されち
+srtu	されつ
+srte	されて
+srto	されと
+srty	されちゃ
+srtx	されちぃ
+srtz	されちゅ
+srtk	されちぇ
+srtq	されちょ
 srtm	するため
 srlr	それぞれ
 ss	させ
@@ -308,7 +306,17 @@ smsf	しますか
 smsg	しますが
 smsn	しません
 smst	しました
-kr	これ
+kr	これ		DisplayAmbiguousResult
+krr	これら		DisplayAmbiguousResult
+krri	これり
+krru	これる
+krre	これれ
+krro	これろ
+krry	これりゃ
+krrx	これりぃ
+krrz	これりゅ
+krrk	これりぇ
+krrq	これりょ
 km	かも
 kn	かな
 kd	けど
@@ -344,7 +352,17 @@ nb	ねば
 nf	なか
 nl	なぜ
 rl	らず
-rr	られ
+rr	られ		DisplayAmbiguousResult
+rrr	られる		DisplayAmbiguousResult
+rrra	られら
+rrri	られり
+rrre	られれ
+rrro	られろ
+rrry	られりゃ
+rrrx	られりぃ
+rrrz	られりゅ
+rrrk	られりぇ
+rrrq	られりょ
 rb	れば
 rt	れて
 md	まで
@@ -354,7 +372,18 @@ mn	もの
 ds	です		DisplayAmbiguousResult
 dst	でした
 wt	わた
-wr	われ
+wr	われ		DisplayAmbiguousResult
+wrl	わらず		DisplayAmbiguousResult
+wrla	われざ
+wrli	われじ
+wrlu	われず
+wrle	われぜ
+wrlo	われぞ
+wrly	われじゃ
+wrlx	われじぃ
+wrlz	われじゅ
+wrlk	われじぇ
+wrlq	われじょ
 ns	なし		DisplayAmbiguousResult
 nstm	にしても
 nt	にち
@@ -370,3 +399,4 @@ gr	がら
 hl	はず
 hd	ほど
 wl	わず
+sl	せず
