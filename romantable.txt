@@ -275,6 +275,7 @@ sr	され		DisplayAmbiguousResult
 srr	される		DisplayAmbiguousResult
 srra	されら
 srri	されり
+srru	される
 srre	されれ
 srro	されろ
 srry	されりゃ
@@ -283,7 +284,7 @@ srrz	されりゅ
 srrk	されりぇ
 srrq	されりょ
 srt	された		DisplayAmbiguousResult
-srtr	されている
+srta	された
 srti	されち
 srtu	されつ
 srte	されて
@@ -293,9 +294,23 @@ srtx	されちぃ
 srtz	されちゅ
 srtk	されちぇ
 srtq	されちょ
+srtr	されている
 srtm	するため
 srlr	それぞれ
-ss	させ
+ss	させ		DisplayAmbiguousResult
+ssr	させる		DisplayAmbiguousResult
+ssra	させら
+ssri	させり
+ssru	させる
+ssre	させれ
+ssro	させろ
+ssry	させりゃ
+ssrx	させりぃ
+ssrz	させりゅ
+ssrk	させりぇ
+ssrq	させりょ
+ssrr	させられ		DisplayAmbiguousResult
+ssrrr	させられる
 st	して
 sn	しな		DisplayAmbiguousResult
 snfr	しなけれ
@@ -308,6 +323,7 @@ smsn	しません
 smst	しました
 kr	これ		DisplayAmbiguousResult
 krr	これら		DisplayAmbiguousResult
+krra	これら
 krri	これり
 krru	これる
 krre	これれ
@@ -347,6 +363,17 @@ bb	べば
 br	ばれ
 lr	ざる
 nr	なる		DisplayAmbiguousResult
+nrl	ならず		DisplayAmbiguousResult
+nrla	なるざ
+nrli	なるじ
+nrlu	なるず
+nrle	なるぜ
+nrlo	なるぞ
+nrly	なるじゃ
+nrlx	なるじぃ
+nrlz	なるじゅ
+nrlk	なるじぇ
+nrlq	なるじょ
 nrms	なります
 nb	ねば
 nf	なか
@@ -356,6 +383,7 @@ rr	られ		DisplayAmbiguousResult
 rrr	られる		DisplayAmbiguousResult
 rrra	られら
 rrri	られり
+rrru	られる
 rrre	られれ
 rrro	られろ
 rrry	られりゃ
@@ -363,6 +391,7 @@ rrrx	られりぃ
 rrrz	られりゅ
 rrrk	られりぇ
 rrrq	られりょ
+rrtm	られても
 rb	れば
 rt	れて
 md	まで
