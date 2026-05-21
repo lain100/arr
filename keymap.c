@@ -268,41 +268,51 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			static bool arrowkeys_registered = false;
 			static uint16_t morph_code = 0;
 
-			switch (morph_type) {
-				case VOL_MORPH:
-					morph_code = (keycode == KC_LEFT) ?
-						KC_VOLD : KC_VOLU;
-					break;
-				case WWW_MORPH:
-					morph_code = (keycode == KC_LEFT) ?
-						KC_WBAK : KC_WFWD;
-					break;
-				case TAB_MORPH:
-					if (record->event.pressed &&
-						keycode == KC_LEFT) {
-						add_weak_mods(MOD_LSFT);
-					}
-					morph_code = KC_TAB;
-					break;
-				default:
-					return true;
-			}
 			if (record->event.pressed) {
+				if (arrowkeys_registered) {
+					unregister_code(morph_code);
+					arrowkeys_registered = false;
+				}
+				switch (morph_type) {
+					case VOL_MORPH:
+						morph_code = (keycode == KC_LEFT) ?
+							KC_VOLD : KC_VOLU;
+						break;
+					case WWW_MORPH:
+						morph_code = (keycode == KC_LEFT) ?
+							KC_WBAK : KC_WFWD;
+						break;
+					case TAB_MORPH:
+						if (record->event.pressed &&
+							keycode == KC_LEFT) {
+							add_weak_mods(MOD_LSFT);
+						}
+						morph_code = KC_TAB;
+						break;
+					default:
+						return true;
+				}
 				register_code(morph_code);
 				arrowkeys_registered = true;
+				return false;
 			} else if (arrowkeys_registered) {
 				unregister_code(morph_code);
 				arrowkeys_registered = false;
+				return false;
 			}
-			return false;
+			break;
 		case KC_BSPC:
 		case KC_COMM:
+		case S(KC_7):
 			static bool bspc_registered = false;
 			static bool comm_registered = false;
-			bool *registered = (keycode == KC_BSPC) ?
-					&bspc_registered : &comm_registered;
-			uint16_t code = (keycode == KC_BSPC) ?
-					KC_DEL : KC_DOT;
+			static bool quot_registered = false;
+			bool 	*registered = 		(keycode == KC_BSPC) ?
+					&bspc_registered : ((keycode == KC_COMM) ?
+					&comm_registered : &quot_registered);
+			uint16_t code =	  (keycode == KC_BSPC) ?
+					KC_DEL : ((keycode == KC_COMM) ?
+					KC_DOT : KC_MINS);
 			uint8_t mod_state = get_mods();
 
 			if (record->event.pressed) {
