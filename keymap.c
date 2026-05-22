@@ -250,17 +250,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 				tap_code(record->tap.count ? KC_PSCR : KC_APP);
 			}
 			break;
-		case KC_F20:
-			static uint16_t cycle = LAYER_CYCLE_END - LAYER_CYCLE_START + 1;
-
+		case LT(0, KC_F20):
+			static uint16_t length = LAYER_CYCLE_END - LAYER_CYCLE_START + 1;
+			
 			if (record->event.pressed) {
-				if (cycle <= 1) {
-					layer_move(LAYER_CYCLE_END);
-					return false;
-				}
-				uint16_t dist = get_highest_layer(layer_state) - LAYER_CYCLE_START + 1;
-
-				layer_move(LAYER_CYCLE_START + (dist % cycle + cycle) % cycle);
+				uint16_t abs_cur = get_highest_layer(layer_state) - LAYER_CYCLE_START;
+				uint16_t next_layer = record->tap.count ?
+					LAYER_CYCLE_START + ((abs_cur + 1) % length + length) % length : 0;
+					
+				layer_move(next_layer);
 			}
 			return false;
 		case KC_LEFT:
@@ -441,6 +439,7 @@ uint16_t get_combo_term(uint16_t combo_index, combo_t* combo) {
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 	switch (keycode) {
+		case LT(0, KC_F20):
 		case LT(2, KC_SPC):
 		case LT(4, KC_ENT):
 			return TAPPING_TERM + 50;
@@ -450,6 +449,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
 
 uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
 	switch (keycode) {
+		case LT(0, KC_F20):
 		case LT(2, KC_SPC):
 		case LT(4, KC_ENT):
 			return 0;
