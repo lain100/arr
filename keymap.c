@@ -47,7 +47,12 @@ mt_t mts[] = {
 	{ RGUI_T(KC_3) },
 };
 
+bool is_mod_pending = false;
+
 void mts_mods_on(void) {
+	if (!is_mod_pending) {
+		return;
+	}
 	uint8_t pending_mods = 0;
 
 	for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
@@ -61,9 +66,8 @@ void mts_mods_on(void) {
 			mt->shifted = false;
 		}
 	}
-	if (pending_mods) {
-		register_mods(pending_mods);
-	}
+	register_mods(pending_mods);
+	is_mod_pending = false;
 }
 
 void send_report_user(uint16_t keycode) {
@@ -166,6 +170,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 						&mt->interrupted : &mt->shifted;
 
 					*pending_state = true;
+					is_mod_pending = true;
 					return false;
 				}
 			} else {
@@ -427,6 +432,16 @@ bool caps_word_press_user(uint16_t keycode) {
 			return true;
 	}
 	return false;
+}
+
+#define ACTIVATE_THRESHOLD 1
+
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+	if (abs(mouse_report.x) + abs(mouse_report.y) > ACTIVATE_THRESHOLD) {
+		mts_mods_on();
+		layer_clear();
+	}
+	return mouse_report;
 }
 
 uint16_t get_combo_term(uint16_t combo_index, combo_t* combo) {

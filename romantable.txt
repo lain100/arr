@@ -285,7 +285,6 @@ srtu	されつ
 srte	されて
 srto	されと
 srtr	されている
-srtm	するため
 srlr	それぞれ
 ss	させ		DisplayAmbiguousResult
 ssr	させる		DisplayAmbiguousResult
@@ -350,12 +349,6 @@ bb	べば
 br	ばれ
 lr	ざる
 nr	なる		DisplayAmbiguousResult
-nrl	ならず		DisplayAmbiguousResult
-nrla	なるざ
-nrli	なるじ
-nrlu	なるず
-nrle	なるぜ
-nrlo	なるぞ
 nrms	なります
 nb	ねば
 nf	なか
