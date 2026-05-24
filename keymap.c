@@ -257,12 +257,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 			break;
 		case LT(0, KC_F20):
 			static uint16_t length = LAYER_CYCLE_END - LAYER_CYCLE_START + 1;
-			
+
 			if (record->event.pressed) {
-				uint16_t abs_cur = get_highest_layer(layer_state) - LAYER_CYCLE_START;
+				uint16_t offset_cur = get_highest_layer(layer_state) - LAYER_CYCLE_START;
 				uint16_t next_layer = record->tap.count ?
-					LAYER_CYCLE_START + ((abs_cur + 1) % length + length) % length : 0;
-					
+					LAYER_CYCLE_START + ((offset_cur + 1) % length + length) % length : 0;
+
 				layer_move(next_layer);
 			}
 			return false;
@@ -434,11 +434,16 @@ bool caps_word_press_user(uint16_t keycode) {
 	return false;
 }
 
-#define ACTIVATE_THRESHOLD 1
+#define MODS_ACTIVATE_THRESHOLD 1
+#define LAYER_CLEAR_THRESHOLD 10
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-	if (abs(mouse_report.x) + abs(mouse_report.y) > ACTIVATE_THRESHOLD) {
+	uint16_t total_move = abs(mouse_report.x) + abs(mouse_report.y);
+
+	if (total_move > MODS_ACTIVATE_THRESHOLD) {
 		mts_mods_on();
+	}
+	if (total_move > LAYER_CLEAR_THRESHOLD) {
 		layer_clear();
 	}
 	return mouse_report;

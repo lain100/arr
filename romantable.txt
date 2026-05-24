@@ -2,17 +2,17 @@
 ~	〜
 .	。
 ,	、
-l/	・
-l.	…
-l,	‥
-ls	←
-ln	↓
-lh	↑
-lt	→
-l-	〜
-l[	『		DisplayAmbiguousResult
-l]	』
-l[]	『』
+z/	・
+z.	…
+z,	‥
+zs	←
+zn	↓
+zh	↑
+zt	→
+z-	〜
+z[	『		DisplayAmbiguousResult
+z]	』
+z[]	『』
 [	「
 ]	」
 va	ゔぁ
@@ -22,27 +22,27 @@ ve	ゔぇ
 vo	ゔぉ
 vy	ゔゃ
 vx	ゔぃ
-vz	ゔゅ
+vj	ゔゅ
 vk	ゔぇ
 vq	ゔょ
 '	っ
-l	z		DisplayAmbiguousResult
-ll	l		DisplayAmbiguousResult
+l		z
+zl	l		DisplayAmbiguousResult
 f		k
 kf	f		DisplayAmbiguousResult
 ky	きゃ
 kx	きぃ
-kz	きゅ
+kj	きゅ
 kk	きぇ
 kq	きょ
 gy	ぎゃ
 gx	ぎぃ
-gz	ぎゅ
+gj	ぎゅ
 gk	ぎぇ
 gq	ぎょ
 sy	しゃ
 sx	しぃ
-sz	しゅ
+sj	しゅ
 sk	しぇ
 sq	しょ
 sha	しゃ
@@ -50,19 +50,19 @@ shi	し
 shu	しゅ
 she	しぇ
 sho	しょ
-ly	じゃ
-lx	じぃ
-lz	じゅ
-lk	じぇ
-lq	じょ
+zy	じゃ
+zx	じぃ
+zj	じゅ
+zk	じぇ
+zq	じょ
 ty	ちゃ
 tx	ちぃ
-tz	ちゅ
+tj	ちゅ
 tk	ちぇ
 tq	ちょ
 dy	ぢゃ
 dx	ぢぃ
-dz	ぢゅ
+dj	ぢゅ
 dk	ぢぇ
 dq	ぢょ
 tsa	つぁ
@@ -75,14 +75,14 @@ t'i	てぃ
 thu	てゅ
 the	てぇ
 tho	てょ
-t'z	てゅ
+t'j	てゅ
 dha	でゃ
 dhi	でぃ
 d'i	でぃ
 dhu	でゅ
 dhe	でぇ
 dho	でょ
-d'z	でゅ
+d'j	でゅ
 twa	とぁ
 twi	とぃ
 twu	とぅ
@@ -97,22 +97,22 @@ dwo	どぉ
 d'u	どぅ
 ny	にゃ
 nx	にぃ
-nz	にゅ
+nj	にゅ
 nk	にぇ
 nq	にょ
 hy	ひゃ
 hx	ひぃ
-hz	ひゅ
+hj	ひゅ
 hk	ひぇ
 hq	ひょ
 by	びゃ
 bx	びぃ
-bz	びゅ
+bj	びゅ
 bk	びぇ
 bq	びょ
 py	ぴゃ
 px	ぴぃ
-pz	ぴゅ
+pj	ぴゅ
 pk	ぴぇ
 pq	ぴょ
 kfa	ふぁ
@@ -121,7 +121,7 @@ kfe	ふぇ
 kfu	ふ
 kfo	ふぉ
 kfy	ふゃ
-kfz	ふゅ
+kfj	ふゅ
 kfq	ふょ
 hwa	ふぁ
 hwi	ふぃ
@@ -129,16 +129,16 @@ hwu	ふ
 hwe	ふぇ
 hwo	ふぉ
 hwy	ふゃ
-hwz	ふゅ
+hwj	ふゅ
 hwq	ふょ
 my	みゃ
 mx	みぃ
-mz	みゅ
+mj	みゅ
 mk	みぇ
 mq	みょ
 ry	りゃ
 rx	りぃ
-rz	りゅ
+rj	りゅ
 rk	りぇ
 rq	りょ
 xn	ん
@@ -155,11 +155,11 @@ xi	ぃ
 xu	ぅ
 xe	ぇ
 xo	ぉ
-lla	ぁ
-lli	ぃ
-llu	ぅ
-lle	ぇ
-llo	ぉ
+zla	ぁ
+zli	ぃ
+zlu	ぅ
+zle	ぇ
+zlo	ぉ
 ka	か
 ki	き
 ku	く
@@ -167,8 +167,8 @@ ke	け
 ko	こ
 xf	ヵ		DisplayAmbiguousResult
 xfe	ヶ
-llf	ヵ		DisplayAmbiguousResult
-llfe	ヶ
+zlf	ヵ		DisplayAmbiguousResult
+zlfe	ヶ
 ga	が
 gi	ぎ
 gu	ぐ
@@ -194,17 +194,16 @@ swi	すぃ
 swu	すぅ
 swe	すぇ
 swo	すぉ
-lw	zw		DisplayAmbiguousResult
-lwa	ずぁ
-lwi	ずぃ
-lwu	ずぅ
-lwe	ずぇ
-lwo	ずぉ
-la	ざ
-li	じ
-lu	ず
-le	ぜ
-lo	ぞ
+zwa	ずぁ
+zwi	ずぃ
+zwu	ずぅ
+zwe	ずぇ
+zwo	ずぉ
+za	ざ
+zi	じ
+zu	ず
+ze	ぜ
+zo	ぞ
 ta	た
 ti	ち
 tu	つ
@@ -241,15 +240,15 @@ mi	み
 mu	む
 me	め
 mo	も
-lly	ゃ
+zly	ゃ
 xy	ゃ
 y	や
 wx	ゐ
-llz	ゅ
-xz	ゅ
-z	ゆ
+zlj	ゅ
+xj	ゅ
+j	ゆ
 wk	ゑ
-llq	ょ
+zlq	ょ
 xq	ょ
 q	よ
 ra	ら
@@ -347,7 +346,7 @@ ht	ひと
 bt	びと
 bb	べば
 br	ばれ
-lr	ざる
+zr	ざる
 nr	なる		DisplayAmbiguousResult
 nrms	なります
 nb	ねば
@@ -378,6 +377,12 @@ ds	です		DisplayAmbiguousResult
 dst	でした
 wt	わた
 wr	われ		DisplayAmbiguousResult
+wrr	われる		DisplayAmbiguousResult
+wrra	われら
+wrri	われり
+wrru	われる
+wrre	われれ
+wrro	われろ
 wrl	わらず		DisplayAmbiguousResult
 wrla	われざ
 wrli	われじ
