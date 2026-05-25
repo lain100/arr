@@ -120,7 +120,7 @@ void roll_taps_processed(uint16_t keycode) {
 		{ RALT_T(KC_9), { 8 }, 1 },
 		{ KC_D, { 1, 2 }, 2 },
 		{ KC_F, { 1 }, 1 },
-		{ KC_H, { 3 }, 1 },
+		{ KC_H, { 1, 3 }, 2 },
 		{ KC_U, { 4 }, 1 },
 	};
 
