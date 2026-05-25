@@ -23,28 +23,27 @@ vo	ゔぉ
 vy	ゔゃ
 vx	ゔぃ
 vj	ゔゅ
-vz	ゔぇ
+vk	ゔぇ
 vq	ゔょ
 '	っ
-k	ー
 l		z
 zl	l		DisplayAmbiguousResult
-f	k		DisplayAmbiguousResult
-ff	f		DisplayAmbiguousResult
-fy	きゃ
-fx	きぃ
-fj	きゅ
-fz	きぇ
-fq	きょ
+f		k
+kf	f		DisplayAmbiguousResult
+ky	きゃ
+kx	きぃ
+kj	きゅ
+kk	きぇ
+kq	きょ
 gy	ぎゃ
 gx	ぎぃ
 gj	ぎゅ
-gz	ぎぇ
+gk	ぎぇ
 gq	ぎょ
 sy	しゃ
 sx	しぃ
 sj	しゅ
-sz	しぇ
+sk	しぇ
 sq	しょ
 sha	しゃ
 shi	し
@@ -54,17 +53,17 @@ sho	しょ
 zy	じゃ
 zx	じぃ
 zj	じゅ
-zz	じぇ
+zk	じぇ
 zq	じょ
 ty	ちゃ
 tx	ちぃ
 tj	ちゅ
-tz	ちぇ
+tk	ちぇ
 tq	ちょ
 dy	ぢゃ
 dx	ぢぃ
 dj	ぢゅ
-dz	ぢぇ
+dk	ぢぇ
 dq	ぢょ
 tsa	つぁ
 tsi	つぃ
@@ -99,31 +98,31 @@ d'u	どぅ
 ny	にゃ
 nx	にぃ
 nj	にゅ
-nz	にぇ
+nk	にぇ
 nq	にょ
 hy	ひゃ
 hx	ひぃ
 hj	ひゅ
-hz	ひぇ
+hk	ひぇ
 hq	ひょ
 by	びゃ
 bx	びぃ
 bj	びゅ
-bz	びぇ
+bk	びぇ
 bq	びょ
 py	ぴゃ
 px	ぴぃ
 pj	ぴゅ
-pz	ぴぇ
+pk	ぴぇ
 pq	ぴょ
-ffa	ふぁ
-ffi	ふぃ
-ffe	ふぇ
-ffu	ふ
-ffo	ふぉ
-ffy	ふゃ
-ffj	ふゅ
-ffq	ふょ
+kfa	ふぁ
+kfi	ふぃ
+kfe	ふぇ
+kfu	ふ
+kfo	ふぉ
+kfy	ふゃ
+kfj	ふゅ
+kfq	ふょ
 hwa	ふぁ
 hwi	ふぃ
 hwu	ふ
@@ -135,12 +134,12 @@ hwq	ふょ
 my	みゃ
 mx	みぃ
 mj	みゅ
-mz	みぇ
+mk	みぇ
 mq	みょ
 ry	りゃ
 rx	りぃ
 rj	りゅ
-rz	りぇ
+rk	りぇ
 rq	りょ
 xn	ん
 n'	ん
@@ -161,11 +160,11 @@ zli	ぃ
 zlu	ぅ
 zle	ぇ
 zlo	ぉ
-fa	か
-fi	き
-fu	く
-fe	け
-fo	こ
+ka	か
+ki	き
+ku	く
+ke	け
+ko	こ
 xf	ヵ		DisplayAmbiguousResult
 xfe	ヶ
 zlf	ヵ		DisplayAmbiguousResult
@@ -180,12 +179,11 @@ si	し
 su	す
 se	せ
 so	そ
-fw	kw		DisplayAmbiguousResult
-fwa	くぁ
-fwi	くぃ
-fwu	くぅ
-fwe	くぇ
-fwo	くぉ
+kwa	くぁ
+kwi	くぃ
+kwu	くぅ
+kwe	くぇ
+kwo	くぉ
 gwa	ぐぁ
 gwi	ぐぃ
 gwu	ぐぅ
@@ -249,7 +247,7 @@ wx	ゐ
 zlj	ゅ
 xj	ゅ
 j	ゆ
-wz	ゑ
+wk	ゑ
 zlq	ょ
 xq	ょ
 q	よ
@@ -271,7 +269,7 @@ who	うぉ
 ms	ます		DisplayAmbiguousResult
 mst	ました
 msn	ません
-ft	こと
+kt	こと
 sr	され		DisplayAmbiguousResult
 srr	される		DisplayAmbiguousResult
 srra	されら
@@ -313,16 +311,16 @@ smsf	しますか
 smsg	しますが
 smsn	しません
 smst	しました
-fr	これ		DisplayAmbiguousResult
-frr	これら		DisplayAmbiguousResult
-frra	これら
-frri	これり
-frru	これる
-frre	これれ
-frro	これろ
-fm	かも
-fn	かな
-fd	けど
+kr	これ		DisplayAmbiguousResult
+krr	これら		DisplayAmbiguousResult
+krra	これら
+krri	これり
+krru	これる
+krre	これれ
+krro	これろ
+km	かも
+kn	かな
+kd	けど
 nm	にも
 nh	のは
 nd	ので		DisplayAmbiguousResult
