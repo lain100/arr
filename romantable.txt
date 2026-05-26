@@ -267,39 +267,21 @@ whu	う
 whe	うぇ
 who	うぉ
 ms	ます		DisplayAmbiguousResult
-mst	ました
-msn	ません
+mstt	ました
+mstg	ましたが
+msnn	ません
+msng	ませんが
 kt	こと
 sr	され		DisplayAmbiguousResult
-srr	される		DisplayAmbiguousResult
-srra	されら
-srri	されり
-srru	される
-srre	されれ
-srro	されろ
-srt	された		DisplayAmbiguousResult
-srta	された
-srti	されち
-srtu	されつ
-srte	されて
-srto	されと
-srtr	されている
+srrr	される
+srtt	された
+srll	されず
 srlr	それぞれ
+srtr	されている
 ss	させ		DisplayAmbiguousResult
-ssr	させる		DisplayAmbiguousResult
-ssra	させら
-ssri	させり
-ssru	させる
-ssre	させれ
-ssro	させろ
-ssrr	させられ		DisplayAmbiguousResult
+ssrr	させる		DisplayAmbiguousResult
 ssrrr	させられる
-sst	させた		DisplayAmbiguousResult
-ssta	させた
-ssti	させち
-sstu	させつ
-sste	させて
-ssto	させと
+sstt	させた
 sstm	させても
 st	して
 sn	しな		DisplayAmbiguousResult
@@ -312,12 +294,7 @@ smsg	しますが
 smsn	しません
 smst	しました
 kr	これ		DisplayAmbiguousResult
-krr	これら		DisplayAmbiguousResult
-krra	これら
-krri	これり
-krru	これる
-krre	これれ
-krro	これろ
+krrr	これら
 km	かも
 kn	かな
 kd	けど
@@ -354,18 +331,8 @@ nf	なか
 nl	なぜ
 rl	らず
 rr	られ		DisplayAmbiguousResult
-rrr	られる		DisplayAmbiguousResult
-rrra	られら
-rrri	られり
-rrru	られる
-rrre	られれ
-rrro	られろ
-rrt	られた		DisplayAmbiguousResult
-rrta	られた
-rrti	られち
-rrtu	られつ
-rrte	られて
-rrto	られと
+rrrr	られる
+rrtt	られた
 rrtm	られても
 rb	れば
 rt	れて
@@ -377,18 +344,8 @@ ds	です		DisplayAmbiguousResult
 dst	でした
 wt	わた
 wr	われ		DisplayAmbiguousResult
-wrr	われる		DisplayAmbiguousResult
-wrra	われら
-wrri	われり
-wrru	われる
-wrre	われれ
-wrro	われろ
-wrl	わらず		DisplayAmbiguousResult
-wrla	われざ
-wrli	われじ
-wrlu	われず
-wrle	われぜ
-wrlo	われぞ
+wrrr	われる
+wrll	わらず
 ns	なし		DisplayAmbiguousResult
 nstm	にしても
 nt	にち
