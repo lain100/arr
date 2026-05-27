@@ -267,23 +267,21 @@ whu	う
 whe	うぇ
 who	うぉ
 ms	ます		DisplayAmbiguousResult
-mstt	ました
+mst	ました		DisplayAmbiguousResult
 mstg	ましたが
-msnn	ません
+msn	ません		DisplayAmbiguousResult
 msng	ませんが
 kt	こと
 sr	され		DisplayAmbiguousResult
-srrr	される
-srtt	された
-srll	されず
 srlr	それぞれ
 srtr	されている
 ss	させ		DisplayAmbiguousResult
-ssrr	させる		DisplayAmbiguousResult
+ssrr	させられ		DisplayAmbiguousResult
 ssrrr	させられる
-sstt	させた
 sstm	させても
-st	して
+st	して		DisplayAmbiguousResult
+sth	しては
+str	している
 sn	しな		DisplayAmbiguousResult
 snfr	しなけれ
 sf	しか
@@ -294,7 +292,7 @@ smsg	しますが
 smsn	しません
 smst	しました
 kr	これ		DisplayAmbiguousResult
-krrr	これら
+krr	これら
 km	かも
 kn	かな
 kd	けど
@@ -331,8 +329,6 @@ nf	なか
 nl	なぜ
 rl	らず
 rr	られ		DisplayAmbiguousResult
-rrrr	られる
-rrtt	られた
 rrtm	られても
 rb	れば
 rt	れて
@@ -341,11 +337,9 @@ mt	また		DisplayAmbiguousResult
 mtrn	もちろん
 mn	もの
 ds	です		DisplayAmbiguousResult
-dst	でした
+dstg	でしたが
 wt	わた
 wr	われ		DisplayAmbiguousResult
-wrrr	われる
-wrll	わらず
 ns	なし		DisplayAmbiguousResult
 nstm	にしても
 nt	にち
@@ -363,3 +357,8 @@ hd	ほど
 wl	わず
 sl	せず
 ws	わせ
+rs	らせ		DisplayAmbiguousResult
+rsrr	らせられ		DisplayAmbiguousResult
+rsrrr	らせられる
+rn	らな		DisplayAmbiguousResult
+rnfr	らなけれ
