@@ -350,6 +350,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 				}
 				layer_clear();
 			}
+			break;
 	}
 	return true;
 }
@@ -434,8 +435,8 @@ bool caps_word_press_user(uint16_t keycode) {
 	return false;
 }
 
-#define MODS_ACTIVATE_THRESHOLD 1
-#define LAYER_CLEAR_THRESHOLD 10
+#define MODS_ACTIVATE_THRESHOLD 0
+#define LAYER_CLEAR_ACTIVATE_THRESHOLD 10
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 	uint16_t total_move = abs(mouse_report.x) + abs(mouse_report.y);
@@ -443,7 +444,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 	if (total_move > MODS_ACTIVATE_THRESHOLD) {
 		mts_mods_on();
 	}
-	if (total_move > LAYER_CLEAR_THRESHOLD) {
+	if (total_move > LAYER_CLEAR_ACTIVATE_THRESHOLD) {
 		layer_clear();
 	}
 	return mouse_report;
