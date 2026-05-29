@@ -119,9 +119,9 @@ void roll_taps_processed(uint16_t keycode) {
         { RALT_T(KC_I), { 5, 7 }, 2 },
         { RGUI_T(KC_E), { 6 }, 1 },
         { RALT_T(KC_9), { 8 }, 1 },
+        { KC_H, { 1, 3 }, 2 },
         { KC_D, { 1, 2 }, 2 },
         { KC_F, { 1 }, 1 },
-        { KC_H, { 1, 3 }, 2 },
         { KC_U, { 4 }, 1 },
         { KC_Y, { 5 }, 1 },
     };
@@ -365,7 +365,6 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 enum combos {
     CMB_INT4,
-    CMB_LNG1,
     CMB_LNG2,
     CMB_CAPS,
     CMB_MS_BTN1,
@@ -378,7 +377,6 @@ enum combos {
 };
 
 const uint16_t PROGMEM cmb_int4[] = {KC_L, KC_W, COMBO_END};
-const uint16_t PROGMEM cmb_lng1[] = {KC_G, KC_M, COMBO_END};
 const uint16_t PROGMEM cmb_lng2[] = {KC_M, KC_F, COMBO_END};
 const uint16_t PROGMEM cmb_caps[] = {KC_G, KC_F, COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_N), LCTL_T(KC_T), COMBO_END};
@@ -391,7 +389,6 @@ const uint16_t PROGMEM cmb_tab_morph[] = {LT(0, KC_F17), LT(0, KC_F18), COMBO_EN
 
 combo_t key_combos[] = {
     [CMB_INT4] = COMBO(cmb_int4, KC_INT4),
-    [CMB_LNG1] = COMBO(cmb_lng1, KC_LNG1),
     [CMB_LNG2] = COMBO(cmb_lng2, KC_LNG2),
     [CMB_CAPS] = COMBO(cmb_caps, KC_CAPS),
     [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
