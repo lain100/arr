@@ -122,6 +122,7 @@ void roll_taps_processed(uint16_t keycode) {
 		{ KC_F, { 1 }, 1 },
 		{ KC_H, { 1, 3 }, 2 },
 		{ KC_U, { 4 }, 1 },
+		{ KC_Y, { 5 }, 1 },
 	};
 
 	for (uint8_t i = 0; i < ARRAY_SIZE(rts); i++) {
@@ -376,9 +377,9 @@ enum combos {
 };
 
 const uint16_t PROGMEM cmb_int4[] = {KC_L, KC_W, COMBO_END};
-const uint16_t PROGMEM cmb_lng1[] = {KC_D, KC_M, COMBO_END};
+const uint16_t PROGMEM cmb_lng1[] = {KC_G, KC_M, COMBO_END};
 const uint16_t PROGMEM cmb_lng2[] = {KC_M, KC_F, COMBO_END};
-const uint16_t PROGMEM cmb_caps[] = {KC_D, KC_F, COMBO_END};
+const uint16_t PROGMEM cmb_caps[] = {KC_G, KC_F, COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_N), LCTL_T(KC_T), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn2[] = {LALT_T(KC_S), LSFT_T(KC_N), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn3[] = {LALT_T(KC_S), LCTL_T(KC_T), COMBO_END};
