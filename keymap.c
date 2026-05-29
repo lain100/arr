@@ -452,7 +452,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 uint16_t get_combo_term(uint16_t combo_index, combo_t* combo) {
     switch (combo_index) {
         case CMB_CAPS_WORD:
-            return COMBO_TERM - 25;
+            return COMBO_TERM - 30;
     }
     return COMBO_TERM;
 }
