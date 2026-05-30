@@ -150,6 +150,7 @@ void roll_taps_processed(uint16_t keycode) {
 enum arrowkeys_morph {
     TAB_MORPH = 1,
     CTRL_TAB_MORPH,
+    CTRL_YanZ_MORPH,
     WWW_MORPH,
     VOL_MORPH,
 };
@@ -200,15 +201,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT(0, KC_F15):
             if (record->event.pressed) {
-                if (record->tap.count) {
-                    add_weak_mods(MOD_LALT);
-                    tap_code(KC_F4);
-                } else {
-                    add_weak_mods(MOD_LCTL);
-                    register_code(KC_Z);
-                }
-            } else if (!record->tap.count) {
-                unregister_code(KC_Z);
+                morph_type = record->tap.count ?
+                    (record->tap.count % 2 ? CTRL_YanZ_MORPH : WWW_MORPH) : VOL_MORPH;
             }
             break;
         case LT(0, KC_F16):
@@ -220,11 +214,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     tap_code(KC_TAB);
                     is_ctrl_alt_tab = true;
                 } else {
-                    add_weak_mods(MOD_LCTL);
-                    register_code(KC_Y);
+                    add_weak_mods(MOD_LALT);
+                    tap_code(KC_F4);
                 }
-            } else if (!record->tap.count) {
-                unregister_code(KC_Y);
             }
             break;
         case LT(0, KC_F17):
@@ -248,9 +240,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case LT(0, KC_F19):
             if (record->event.pressed) {
-                uint16_t type = record->tap.count % 4;
-
-                morph_type = record->tap.count ? (type ? type : 4) : 0;
+                morph_type = record->tap.count ?
+                    (record->tap.count % 2 ? TAB_MORPH : CTRL_TAB_MORPH) : 0;
             }
             break;
         case LT(0, KC_F20):
@@ -276,19 +267,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 switch (morph_type) {
                     case TAB_MORPH:
-                        if (record->event.pressed &&
-                            keycode == KC_LEFT) {
-                            add_weak_mods(MOD_LSFT);
+                    case CTRL_TAB_MORPH:
+                        if (record->event.pressed) {
+                            if (keycode == KC_LEFT) {
+                                add_weak_mods(MOD_LSFT);
+                            }
+                            if (morph_type == CTRL_TAB_MORPH) {
+                                add_weak_mods(MOD_LCTL);
+                            }
                         }
                         morph_code = KC_TAB;
                         break;
-                    case CTRL_TAB_MORPH:
-                        if (record->event.pressed &&
-                            keycode == KC_LEFT) {
-                            add_weak_mods(MOD_LSFT);
+                    case CTRL_YanZ_MORPH:
+                        if (record->event.pressed) {
+                            add_weak_mods(MOD_LCTL);
                         }
-                        add_weak_mods(MOD_LCTL);
-                        morph_code = KC_TAB;
+                        morph_code = (keycode == KC_LEFT) ?
+                            KC_Z : KC_Y;
                         break;
                     case WWW_MORPH:
                         morph_code = (keycode == KC_LEFT) ?
