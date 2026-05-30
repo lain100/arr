@@ -201,24 +201,29 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT(0, KC_F15):
             if (record->event.pressed) {
-                morph_type = record->tap.count ?
-                    (record->tap.count % 2 ? CTRL_YanZ_MORPH : WWW_MORPH) : VOL_MORPH;
-            }
-            break;
-        case LT(0, KC_F16):
-            static bool is_ctrl_alt_tab = false;
-
-            if (record->event.pressed) {
                 if (record->tap.count) {
-                    add_weak_mods(MOD_LCTL | MOD_LALT);
-                    tap_code(KC_TAB);
-                    is_ctrl_alt_tab = true;
+                    morph_type = record->tap.count % 2 ?
+                        WWW_MORPH : CTRL_YanZ_MORPH;
                 } else {
                     add_weak_mods(MOD_LALT);
                     tap_code(KC_F4);
                 }
             }
-            break;
+            return false;
+        case LT(0, KC_F16):
+            if (record->event.pressed) {
+                if (record->tap.count) {
+                    if (get_mods() & MOD_LALT) {
+                        unregister_mods(MOD_LALT);
+                    } else {
+                        register_mods(MOD_LALT);
+                        tap_code(KC_TAB);
+                    }
+                } else {
+                    morph_type = CTRL_TAB_MORPH;
+                }
+            }
+            return false;
         case LT(0, KC_F17):
         case LT(0, KC_F18):
             uint16_t mod = (keycode == LT(0, KC_F17)) ?
@@ -237,13 +242,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     tap_code(f_code);
                 }
             }
-            break;
+            return false;
         case LT(0, KC_F19):
             if (record->event.pressed) {
                 morph_type = record->tap.count ?
-                    (record->tap.count % 2 ? TAB_MORPH : CTRL_TAB_MORPH) : 0;
+                    (record->tap.count % 2 ? TAB_MORPH : VOL_MORPH) : 0;
             }
-            break;
+            return false;
         case LT(0, KC_F20):
             static uint16_t length = LAYER_CYCLE_END - LAYER_CYCLE_START + 1;
 
@@ -336,11 +341,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(2, KC_SPC):
             if (!record->tap.count) {
                 if (!record->event.pressed) {
-                    unregister_mods(MOD_LSFT | MOD_LCTL);
-                    if (is_ctrl_alt_tab) {
-                        tap_code(KC_ENT);
-                        is_ctrl_alt_tab = false;
-                    }
+                    unregister_mods(MOD_LALT | MOD_LSFT | MOD_LCTL);
                     if (morph_type) {
                         if (arrowkeys_registered) {
                             unregister_code(morph_code);
