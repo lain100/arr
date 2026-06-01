@@ -453,10 +453,6 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     return mouse_report;
 }
 
-uint16_t get_combo_term(uint16_t combo_index, combo_t* combo) {
-    return COMBO_TERM;
-}
-
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT(0, KC_F20):

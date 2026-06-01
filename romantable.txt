@@ -304,7 +304,7 @@ ndsg	のですが
 ng	のが
 nn	なの
 dm	でも
-df	だけ
+df	でき
 dh	では		DisplayAmbiguousResult
 dhnf	ではなく
 dt	だと
@@ -362,3 +362,4 @@ rsrr	らせられ		DisplayAmbiguousResult
 rsrrr	らせられる
 rn	らな		DisplayAmbiguousResult
 rnfr	らなけれ
+bf	べき
