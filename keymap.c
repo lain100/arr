@@ -16,6 +16,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdint.h>
+#include <sys/types.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -146,14 +148,16 @@ void roll_taps_processed(uint16_t keycode) {
 #define LAYER_CYCLE_START 1
 #define LAYER_CYCLE_END   4
 
-enum arrowkeys_morph {
+enum my_keycodes {
+    KC_CTRL_TAB = SAFE_RANGE,
+    KC_CAPS_WORD,
+};
+enum arrowkeys_types {
     TAB_MORPH = 1,
     CTRL_TAB_MORPH,
     CTRL_YanZ_MORPH,
-    WWW_MORPH,
     VOL_MORPH,
 };
-uint16_t morph_type = 0;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
@@ -196,6 +200,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     roll_taps_processed(keycode);
     mts_mods_on();
+    static uint16_t morph_type = 0;
 
     switch (keycode) {
         case LT(0, KC_F15):
@@ -256,6 +261,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 layer_move(next_layer);
             }
             return false;
+        case KC_CTRL_TAB:
+            morph_type = CTRL_TAB_MORPH;
+            return false;
+        case LT(0, KC_CAPS_WORD):
+            if (record->event.pressed) {
+                if (record->tap.count) {
+                    tap_code_attached(KC_N, 0);
+                    tap_code_attached(KC_A, 0);
+                } else {
+                    caps_word_on();
+                }
+            }
+            return false;
         case KC_LEFT:
         case KC_RGHT:
             static bool arrowkeys_registered = false;
@@ -289,10 +307,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         }
                         morph_code = (keycode == KC_LEFT) ?
                             KC_Z : KC_Y;
-                        break;
-                    case WWW_MORPH:
-                        morph_code = (keycode == KC_LEFT) ?
-                            KC_WBAK : KC_WFWD;
                         break;
                     case VOL_MORPH:
                         morph_code = (keycode == KC_LEFT) ?
@@ -359,6 +373,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 layer_clear();
             }
             break;
+        case KC_MS_BTN1:
+        case KC_MS_BTN2:
+        case KC_MS_BTN3:
+            if (record->event.pressed) {
+                mts_mods_on();
+            }
+            break;
     }
     return true;
 }
@@ -370,54 +391,41 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 enum combos {
+    CMB_APP,
     CMB_INT4,
     CMB_LNG2,
     CMB_CAPS,
-    CMB_APP,
+    CMB_PSCR,
     CMB_MS_BTN1,
     CMB_MS_BTN2,
     CMB_MS_BTN3,
-    CMB_CAPS_WORD,
     CMB_CTRL_TAB,
-    CMB_PSCR,
+    CMB_CAPS_WORD,
 };
 
-const uint16_t PROGMEM cmb_int4[] = {KC_L, KC_W, COMBO_END};
+const uint16_t PROGMEM cmb_app[] = {KC_G, KC_M, COMBO_END};
+const uint16_t PROGMEM cmb_int4[] = {KC_D, KC_W, COMBO_END};
 const uint16_t PROGMEM cmb_lng2[] = {KC_M, KC_F, COMBO_END};
 const uint16_t PROGMEM cmb_caps[] = {KC_G, KC_F, COMBO_END};
-const uint16_t PROGMEM cmb_app[] = {KC_G, KC_M, COMBO_END};
+const uint16_t PROGMEM cmb_pscr[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_N), LCTL_T(KC_T), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn2[] = {LALT_T(KC_S), LSFT_T(KC_N), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn3[] = {LALT_T(KC_S), LCTL_T(KC_T), COMBO_END};
-const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_N), RSFT_T(KC_A), COMBO_END};
 const uint16_t PROGMEM cmb_ctrl_tab[] = {KC_LEFT, KC_RGHT, COMBO_END};
-const uint16_t PROGMEM cmb_pscr[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_END};
+const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_N), RSFT_T(KC_A), COMBO_END};
 
 combo_t key_combos[] = {
+    [CMB_APP] = COMBO(cmb_app, KC_APP),
     [CMB_INT4] = COMBO(cmb_int4, KC_INT4),
     [CMB_LNG2] = COMBO(cmb_lng2, KC_LNG2),
     [CMB_CAPS] = COMBO(cmb_caps, KC_CAPS),
-    [CMB_APP] = COMBO(cmb_app, KC_APP),
+    [CMB_PSCR] = COMBO(cmb_pscr, KC_PSCR),
     [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
     [CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
     [CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
-    [CMB_CAPS_WORD] = COMBO_ACTION(cmb_caps_word),
-    [CMB_CTRL_TAB] = COMBO_ACTION(cmb_ctrl_tab),
-    [CMB_PSCR] = COMBO(cmb_pscr, KC_PSCR),
+    [CMB_CTRL_TAB] = COMBO(cmb_ctrl_tab, KC_CTRL_TAB),
+    [CMB_CAPS_WORD] = COMBO(cmb_caps_word, LT(0, KC_CAPS_WORD)),
 };
-
-void process_combo_event(uint16_t combo_index, bool pressed) {
-    if (pressed) {
-        switch (combo_index) {
-            case CMB_CAPS_WORD:
-                caps_word_on();
-            break;
-            case CMB_CTRL_TAB:
-                morph_type = CTRL_TAB_MORPH;
-            break;
-        }
-    }
-}
 
 bool caps_word_press_user(uint16_t keycode) {
     switch (keycode) {
@@ -435,13 +443,12 @@ bool caps_word_press_user(uint16_t keycode) {
     return false;
 }
 
-#define MODS_ACTIVATE_THRESHOLD 0
 #define LAYER_CLEAR_ACTIVATE_THRESHOLD 10
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     uint16_t total_move = abs(mouse_report.x) + abs(mouse_report.y);
 
-    if (total_move > MODS_ACTIVATE_THRESHOLD) {
+    if (total_move) {
         mts_mods_on();
     }
     if (total_move > LAYER_CLEAR_ACTIVATE_THRESHOLD) {
@@ -451,10 +458,6 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 }
 
 uint16_t get_combo_term(uint16_t combo_index, combo_t* combo) {
-    switch (combo_index) {
-        case CMB_CAPS_WORD:
-            return COMBO_TERM - 30;
-    }
     return COMBO_TERM;
 }
 
