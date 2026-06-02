@@ -225,7 +225,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else if (record->tap.count) {
                     tap_code(KC_ESC);
                 } else {
-                    tap_code(KC_APP);
+                    uint8_t saved_mods = get_mods();
+
+                    del_mods(saved_mods);
+                    add_weak_mods(MOD_LCTL);
+                    tap_code(KC_C);
+                    set_mods(saved_mods);
                 }
             }
             return false;
@@ -243,9 +248,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     } else {
                         register_mods(mod);
                     }
-                } else if (record->tap.count && mod == MOD_LCTL) {
+                } else if (record->tap.count) {
                     unregister_mods(mod);
-                    morph_type = CTRL_TAB_MORPH;
+                    if (keycode == LT(0, KC_F17)) {
+                        uint8_t saved_mods = get_mods();
+
+                        del_mods(saved_mods);
+                        add_weak_mods(MOD_LCTL);
+                        tap_code(KC_V);
+                        set_mods(saved_mods);
+                    } else {
+                        morph_type = CTRL_TAB_MORPH;
+                    }
                 } else {
                     tap_code(f_code);
                 }
