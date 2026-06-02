@@ -151,7 +151,6 @@ void roll_taps_processed(uint16_t keycode) {
 enum my_keycodes {
     KC_LNGS = SAFE_RANGE,
     KC_CAPS_WORD,
-    KC_CTRL_MORPH,
 };
 enum arrowkeys_types {
     TAB_MORPH = 1,
@@ -207,7 +206,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(0, KC_F15):
             if (record->event.pressed) {
                 if (record->tap.count) {
-                    tap_code(KC_PSCR);
+                    morph_type = CTRL_YanZ_MORPH;
                 } else {
                     add_weak_mods(MOD_LALT);
                     tap_code(KC_F4);
@@ -216,13 +215,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case LT(0, KC_F16):
             if (record->event.pressed) {
-                if (get_mods() & MOD_LALT) {
-                    unregister_mods(MOD_LALT);
-                } else {
-                    register_mods(MOD_LALT);
-                    if (record->tap.count) {
+                if (record->tap.count == 1) {
+                    if (get_mods() & MOD_LALT) {
+                        unregister_mods(MOD_LALT);
+                    } else {
+                        register_mods(MOD_LALT);
                         tap_code(KC_TAB);
                     }
+                } else if (record->tap.count) {
+                    tap_code(KC_ESC);
+                } else {
+                    tap_code(KC_APP);
                 }
             }
             return false;
@@ -234,12 +237,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 KC_F14 : KC_F16;
 
             if (record->event.pressed) {
-                if (record->tap.count) {
+                if (record->tap.count == 1) {
                     if (get_mods() & mod) {
                         unregister_mods(mod);
                     } else {
                         register_mods(mod);
                     }
+                } else if (record->tap.count && mod == MOD_LCTL) {
+                    unregister_mods(mod);
+                    morph_type = CTRL_TAB_MORPH;
                 } else {
                     tap_code(f_code);
                 }
@@ -247,8 +253,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case LT(0, KC_F19):
             if (record->event.pressed) {
-                morph_type = record->tap.count ?
-                    (record->tap.count % 2 ? TAB_MORPH : VOL_MORPH) : 0;
+                morph_type = record->tap.count == 1 ?
+                    TAB_MORPH : (record->tap.count ? VOL_MORPH : 0);
             }
             return false;
         case LT(0, KC_F20):
@@ -260,12 +266,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     LAYER_CYCLE_START + ((offset_cur + 1) % length + length) % length : 0;
 
                 layer_move(next_layer);
-            }
-            return false;
-        case LT(0, KC_CTRL_MORPH):
-            if (record->event.pressed) {
-                morph_type = record->tap.count ?
-                    CTRL_TAB_MORPH : CTRL_YanZ_MORPH;
             }
             return false;
         case LT(0, KC_LNGS):
@@ -396,31 +396,31 @@ enum combos {
     CMB_APP,
     CMB_INT4,
     CMB_LNGS,
+    CMB_PSCR,
     CMB_MS_BTN1,
     CMB_MS_BTN2,
     CMB_MS_BTN3,
     CMB_CAPS_WORD,
-    CMB_CTRL_MORPH,
 };
 
 const uint16_t PROGMEM cmb_app[] = {KC_G, KC_M, COMBO_END};
 const uint16_t PROGMEM cmb_int4[] = {KC_G, KC_F, COMBO_END};
 const uint16_t PROGMEM cmb_lngs[] = {KC_M, KC_F, COMBO_END};
+const uint16_t PROGMEM cmb_pscr[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_N), LCTL_T(KC_T), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn2[] = {LALT_T(KC_S), LSFT_T(KC_N), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn3[] = {LALT_T(KC_S), LCTL_T(KC_T), COMBO_END};
 const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_N), RSFT_T(KC_A), COMBO_END};
-const uint16_t PROGMEM cmb_ctrl_morph[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_END};
 
 combo_t key_combos[] = {
     [CMB_APP] = COMBO(cmb_app, KC_APP),
     [CMB_INT4] = COMBO(cmb_int4, KC_INT4),
     [CMB_LNGS] = COMBO(cmb_lngs, LT(0, KC_LNGS)),
+    [CMB_PSCR] = COMBO(cmb_pscr, LT(0, KC_PSCR)),
     [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
     [CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
     [CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
     [CMB_CAPS_WORD] = COMBO(cmb_caps_word, LT(0, KC_CAPS_WORD)),
-    [CMB_CTRL_MORPH] = COMBO(cmb_ctrl_morph, LT(0, KC_CTRL_MORPH)),
 };
 
 bool caps_word_press_user(uint16_t keycode) {
@@ -459,7 +459,6 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case LT(2, KC_SPC):
         case LT(4, KC_ENT):
         case LT(0, KC_LNGS):
-        case LT(0, KC_CTRL_MORPH):
             return TAPPING_TERM + 50;
     }
     return TAPPING_TERM;
