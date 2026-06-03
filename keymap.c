@@ -229,17 +229,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     } else {
                         register_mods(mod);
                         if (keycode == LT(0, KC_F16)) {
-                            morph_type = TAB_MORPH;
+                            tap_code(KC_TAB);
                         }
                     }
                 } else if (record->tap.count) {
-                    unregister_mods(mod);
-                    if (keycode == LT(0, KC_F17)) {
+                    if (keycode == LT(0, KC_F16)) {
+                        tap_code(KC_ESC);
+                        morph_type = WWW_MORPH;
+                    } else if (keycode == LT(0, KC_F17)) {
                         KC_CanV = KC_V;
                     } else {
-                        morph_type = (keycode == LT(0, KC_F16)) ?
-                            WWW_MORPH : CTRL_TAB_MORPH;
+                        morph_type = CTRL_TAB_MORPH;
                     }
+                    unregister_mods(mod);
                 } else {
                     if (keycode == LT(0, KC_F16)) {
                         KC_CanV = KC_C;
