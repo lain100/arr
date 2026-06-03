@@ -283,7 +283,8 @@ st	して		DisplayAmbiguousResult
 sth	しては
 str	している
 sn	しな		DisplayAmbiguousResult
-snfr	しなけれ
+snfr	しなけれ		DisplayAmbiguousResult
+snfrb	しなければ
 sf	しか
 sg	すぎ
 sm	しま		DisplayAmbiguousResult

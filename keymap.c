@@ -146,7 +146,7 @@ void roll_taps_processed(uint16_t keycode) {
 }
 
 #define LAYER_CYCLE_START 1
-#define LAYER_CYCLE_END   4
+#define LAYER_CYCLE_END   3
 
 enum my_keycodes {
     KC_LNGS = SAFE_RANGE,
@@ -155,6 +155,7 @@ enum my_keycodes {
 enum arrowkeys_types {
     TAB_MORPH = 1,
     VOL_MORPH,
+    WWW_MORPH,
     CTRL_TAB_MORPH,
     CTRL_YanZ_MORPH,
 };
@@ -214,32 +215,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             return false;
         case LT(0, KC_F16):
-            if (record->event.pressed) {
-                if (record->tap.count == 1) {
-                    if (get_mods() & MOD_LALT) {
-                        unregister_mods(MOD_LALT);
-                    } else {
-                        register_mods(MOD_LALT);
-                        tap_code(KC_TAB);
-                    }
-                } else if (record->tap.count) {
-                    tap_code(KC_ESC);
-                } else {
-                    uint8_t saved_mods = get_mods();
-
-                    del_mods(saved_mods);
-                    add_weak_mods(MOD_LCTL);
-                    tap_code(KC_C);
-                    set_mods(saved_mods);
-                }
-            }
-            return false;
         case LT(0, KC_F17):
         case LT(0, KC_F18):
-            uint8_t mod = (keycode == LT(0, KC_F17)) ?
-                MOD_LSFT : MOD_LCTL;
-            uint16_t f_code = (keycode == LT(0,KC_F17)) ?
-                KC_F14 : KC_F16;
+            uint8_t mod  =  (keycode == LT(0, KC_F16)) ?
+                MOD_LALT : ((keycode == LT(0, KC_F17)) ?
+                MOD_LSFT : MOD_LCTL);
+            uint16_t KC_CanV = 0;
 
             if (record->event.pressed) {
                 if (record->tap.count == 1) {
@@ -247,21 +228,32 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         unregister_mods(mod);
                     } else {
                         register_mods(mod);
+                        if (keycode == LT(0, KC_F16)) {
+                            morph_type = TAB_MORPH;
+                        }
                     }
                 } else if (record->tap.count) {
                     unregister_mods(mod);
                     if (keycode == LT(0, KC_F17)) {
-                        uint8_t saved_mods = get_mods();
-
-                        del_mods(saved_mods);
-                        add_weak_mods(MOD_LCTL);
-                        tap_code(KC_V);
-                        set_mods(saved_mods);
+                        KC_CanV = KC_V;
                     } else {
-                        morph_type = CTRL_TAB_MORPH;
+                        morph_type = (keycode == LT(0, KC_F16)) ?
+                            WWW_MORPH : CTRL_TAB_MORPH;
                     }
                 } else {
-                    tap_code(f_code);
+                    if (keycode == LT(0, KC_F16)) {
+                        KC_CanV = KC_C;
+                    } else {
+                        tap_code((keycode == LT(0,KC_F17)) ? KC_F14 : KC_F16);
+                    }
+                }
+                if (KC_CanV) {
+                    uint8_t saved_mods = get_mods();
+
+                    del_mods(saved_mods);
+                    add_weak_mods(MOD_LCTL);
+                    tap_code(KC_CanV);
+                    set_mods(saved_mods);
                 }
             }
             return false;
@@ -277,7 +269,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 uint16_t offset_cur = get_highest_layer(layer_state) - LAYER_CYCLE_START;
                 uint16_t next_layer = record->tap.count ?
-                    LAYER_CYCLE_START + ((offset_cur + 1) % length + length) % length : 0;
+                    LAYER_CYCLE_START + ((offset_cur + 1) % length + length) % length : 4;
 
                 layer_move(next_layer);
             }
@@ -334,6 +326,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     case VOL_MORPH:
                         morph_code = (keycode == KC_LEFT) ?
                             KC_VOLD : KC_VOLU;
+                        break;
+                    case WWW_MORPH:
+                        morph_code = (keycode == KC_LEFT) ?
+                            KC_WBAK : KC_WFWD;
                         break;
                     default:
                         return true;
