@@ -200,6 +200,23 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
 
+    if (keycode == MY_MS_BTN1) {
+        if (record->event.pressed) {
+            if (is_mod_pending) {
+                report_mouse_t mouse_report = pointing_device_get_report();
+
+                mts_mods_on();
+                mouse_report.buttons |= MOUSE_BTN1;
+                pointing_device_set_report(mouse_report);
+                return false;
+            }
+            register_code(KC_MS_BTN1);
+        } else {
+            unregister_code(KC_MS_BTN1);
+        }
+        return false;
+    }
+
     roll_taps_processed(keycode);
     mts_mods_on();
     static uint16_t morph_type = 0;
@@ -395,15 +412,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 layer_clear();
             }
             break;
-        case MY_MS_BTN1:
-            report_mouse_t currentReport = pointing_device_get_report();
-
-            if (record->event.pressed) {
-                currentReport.buttons |= 0x10;
-            } else {
-                currentReport.buttons &= ~0x10;
-            }
-            pointing_device_set_report(currentReport);
     }
     return true;
 }
@@ -466,13 +474,6 @@ bool caps_word_press_user(uint16_t keycode) {
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     uint16_t total_move = abs(mouse_report.x) + abs(mouse_report.y);
 
-    if (mouse_report.buttons & 0x10) {
-        mts_mods_on();
-        mouse_report.buttons |= mouse_report.buttons & 0x20 ?
-             MOUSE_BTN1 : 0x20;
-    } else {
-        mouse_report.buttons &= ~(MOUSE_BTN1 | 0x20);
-    }
     if (total_move) {
         mts_mods_on();
     }
