@@ -161,8 +161,6 @@ enum arrowkeys_types {
     CTRL_YanZ_MORPH,
 };
 
-bool is_mouse_down = false;
-
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
         mt_t *mt = &mts[i];
@@ -467,18 +465,13 @@ bool caps_word_press_user(uint16_t keycode) {
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     uint16_t total_move = abs(mouse_report.x) + abs(mouse_report.y);
-    static bool hundle = false;
 
     if (mouse_report.buttons & 0x10) {
         mts_mods_on();
-        if (hundle) {
-            mouse_report.buttons |= MOUSE_BTN1;
-        } else {
-            hundle = true;
-        }
+        mouse_report.buttons |= mouse_report.buttons & 0x20 ?
+             MOUSE_BTN1 : 0x20;
     } else {
-        mouse_report.buttons &= ~MOUSE_BTN1;
-        hundle = false;
+        mouse_report.buttons &= ~(MOUSE_BTN1 | 0x20);
     }
     if (total_move) {
         mts_mods_on();
