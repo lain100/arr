@@ -17,6 +17,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <stdint.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include QMK_KEYBOARD_H
 
@@ -151,7 +152,6 @@ void roll_taps_processed(uint16_t keycode) {
 enum my_keycodes {
     KC_LNGS = SAFE_RANGE,
     KC_CAPS_WORD,
-    MY_MS_BTN1,
 };
 enum arrowkeys_types {
     TAB_MORPH = 1,
@@ -200,21 +200,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
 
-    if (keycode == MY_MS_BTN1) {
-        if (record->event.pressed) {
-            if (is_mod_pending) {
+    switch (keycode) {
+        case KC_MS_BTN1:
+        case KC_MS_BTN2:
+        case KC_MS_BTN3:
+            if (record->event.pressed && is_mod_pending) {
                 report_mouse_t mouse_report = pointing_device_get_report();
 
                 mts_mods_on();
-                mouse_report.buttons |= MOUSE_BTN1;
+                mouse_report.buttons |= MOUSE_BTN1 << (keycode - KC_MS_BTN1);
                 pointing_device_set_report(mouse_report);
                 return false;
             }
-            register_code(KC_MS_BTN1);
-        } else {
-            unregister_code(KC_MS_BTN1);
-        }
-        return false;
     }
 
     roll_taps_processed(keycode);
@@ -447,7 +444,7 @@ combo_t key_combos[] = {
     [CMB_INT4] = COMBO(cmb_int4, KC_INT4),
     [CMB_LNGS] = COMBO(cmb_lngs, LT(0, KC_LNGS)),
     [CMB_PSCR] = COMBO(cmb_pscr, LT(0, KC_PSCR)),
-    [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, MY_MS_BTN1),
+    [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
     [CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
     [CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
     [CMB_CAPS_WORD] = COMBO(cmb_caps_word, LT(0, KC_CAPS_WORD)),
