@@ -151,6 +151,7 @@ void roll_taps_processed(uint16_t keycode) {
 enum my_keycodes {
     KC_LNGS = SAFE_RANGE,
     KC_CAPS_WORD,
+    MY_MS_BTN1,
 };
 enum arrowkeys_types {
     TAB_MORPH = 1,
@@ -159,6 +160,8 @@ enum arrowkeys_types {
     CTRL_TAB_MORPH,
     CTRL_YanZ_MORPH,
 };
+
+bool is_mouse_down = false;
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
@@ -394,6 +397,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 layer_clear();
             }
             break;
+        case MY_MS_BTN1:
+            report_mouse_t currentReport = pointing_device_get_report();
+
+            if (record->event.pressed) {
+                currentReport.buttons |= 0x10;
+            } else {
+                currentReport.buttons &= ~0x10;
+            }
+            pointing_device_set_report(currentReport);
     }
     return true;
 }
@@ -429,7 +441,7 @@ combo_t key_combos[] = {
     [CMB_INT4] = COMBO(cmb_int4, KC_INT4),
     [CMB_LNGS] = COMBO(cmb_lngs, LT(0, KC_LNGS)),
     [CMB_PSCR] = COMBO(cmb_pscr, LT(0, KC_PSCR)),
-    [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
+    [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, MY_MS_BTN1),
     [CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
     [CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
     [CMB_CAPS_WORD] = COMBO(cmb_caps_word, LT(0, KC_CAPS_WORD)),
@@ -455,7 +467,19 @@ bool caps_word_press_user(uint16_t keycode) {
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     uint16_t total_move = abs(mouse_report.x) + abs(mouse_report.y);
+    static bool hundle = false;
 
+    if (mouse_report.buttons & 0x10) {
+        mts_mods_on();
+        if (hundle) {
+            mouse_report.buttons |= MOUSE_BTN1;
+        } else {
+            hundle = true;
+        }
+    } else {
+        mouse_report.buttons &= ~MOUSE_BTN1;
+        hundle = false;
+    }
     if (total_move) {
         mts_mods_on();
     }
