@@ -146,8 +146,8 @@ void roll_taps_processed(uint16_t keycode) {
     }
 }
 
-#define LAYER_CYCLE_START 1
-#define LAYER_CYCLE_END   3
+#define LAYER_CYCLE_START 2
+#define LAYER_CYCLE_END   4
 
 enum my_keycodes {
     KC_LNGS = SAFE_RANGE,
@@ -159,7 +159,18 @@ enum arrowkeys_types {
     WWW_MORPH,
     CTRL_TAB_MORPH,
     CTRL_YanZ_MORPH,
+    FOUR_MOVES_MORPH,
 };
+uint16_t morph_type = 0;
+uint16_t morph_code = 0;
+bool first_iteration = false;
+bool arrowkeys_registered = false;
+
+void four_moves(uint16_t keycode) {
+    for (uint8_t i = 0; i < 4; i++) {
+        tap_code(keycode);
+    }
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
@@ -216,7 +227,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     roll_taps_processed(keycode);
     mts_mods_on();
-    static uint16_t morph_type = 0;
 
     switch (keycode) {
         case LT(0, KC_F15):
@@ -277,7 +287,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(0, KC_F19):
             if (record->event.pressed) {
                 morph_type = record->tap.count == 1 ?
-                    TAB_MORPH : (record->tap.count ? VOL_MORPH : 0);
+                    TAB_MORPH : (record->tap.count ? FOUR_MOVES_MORPH : VOL_MORPH);
             }
             return false;
         case LT(0, KC_F20):
@@ -286,7 +296,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 uint16_t offset_cur = get_highest_layer(layer_state) - LAYER_CYCLE_START;
                 uint16_t next_layer = record->tap.count ?
-                    LAYER_CYCLE_START + ((offset_cur + 1) % length + length) % length : 4;
+                    LAYER_CYCLE_START + ((offset_cur + 1) % length + length) % length : 1;
 
                 layer_move(next_layer);
             }
@@ -308,9 +318,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case KC_LEFT:
         case KC_RGHT:
-            static bool arrowkeys_registered = false;
-            static uint16_t morph_code = 0;
-
             if (record->event.pressed) {
                 if (arrowkeys_registered) {
                     unregister_code(morph_code);
@@ -348,6 +355,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         morph_code = (keycode == KC_LEFT) ?
                             KC_WBAK : KC_WFWD;
                         break;
+                    case FOUR_MOVES_MORPH:
+                        four_moves(keycode);
+                        morph_code = keycode;
+                        first_iteration = true;
+                        arrowkeys_registered = true;
+                        return false;
                     default:
                         return true;
                 }
@@ -394,8 +407,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return false;
             }
             break;
+        case LT(4, KC_ENT):
+            static bool is_ent_pressed = false;
+
+            if (!record->tap.count) {
+                is_ent_pressed = record->event.pressed;
+            }
+            break;
         case LT(2, KC_SPC):
             if (!record->tap.count) {
+                layer_clear();
                 if (!record->event.pressed) {
                     unregister_mods(MOD_LALT | MOD_LSFT | MOD_LCTL);
                     if (morph_type) {
@@ -405,8 +426,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         }
                         morph_type = 0;
                     }
+                    if (is_ent_pressed) {
+                        layer_on(4);
+                    }
                 }
-                layer_clear();
             }
             break;
     }
@@ -416,6 +439,27 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed) {
         send_report_user(keycode);
+    }
+}
+
+#define REPEAT_DELAY 500
+#define REPEAT_INTERVAL 40
+
+void matrix_scan_user(void) {
+    static uint16_t repeat_timer = 0;
+
+    if (morph_type == FOUR_MOVES_MORPH &&
+            arrowkeys_registered) {
+        if (repeat_timer == 0) {
+            repeat_timer = timer_read();
+        } else if (timer_elapsed(repeat_timer) > (first_iteration ?
+            REPEAT_DELAY : REPEAT_INTERVAL)) {
+            four_moves(morph_code);
+            first_iteration = false;
+            repeat_timer = timer_read();
+        }
+    } else {
+        repeat_timer = 0;
     }
 }
 
