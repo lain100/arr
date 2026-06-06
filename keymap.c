@@ -466,7 +466,15 @@ bool caps_word_press_user(uint16_t keycode) {
     return false;
 }
 
+#define COMBO_REF_DEFAULT 0
 #define LAYER_CLEAR_ACTIVATE_THRESHOLD 10
+
+uint8_t combo_ref_from_layer(uint8_t layer) {
+    switch (get_highest_layer(layer_state)) {
+        case 2: return 2;
+        default: return COMBO_REF_DEFAULT;
+    }
+}
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     uint16_t total_move = abs(mouse_report.x) + abs(mouse_report.y);
@@ -474,7 +482,8 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (total_move) {
         mts_mods_on();
     }
-    if (total_move > LAYER_CLEAR_ACTIVATE_THRESHOLD) {
+    if (total_move > LAYER_CLEAR_ACTIVATE_THRESHOLD &&
+        get_highest_layer(layer_state) != 1) {
         layer_clear();
     }
     return mouse_report;
