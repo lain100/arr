@@ -28,6 +28,15 @@ vq	ゔょ
 '	っ
 l	z		DisplayAmbiguousResult
 ll	l		DisplayAmbiguousResult
+ldd		ld
+lpp		lp
+lbb		lb
+lgg		lg
+lmm		lm
+lff		lf
+lvv		lv
+lc	lん		DisplayAmbiguousResult
+lcc		lc
 f		k
 kf	f		DisplayAmbiguousResult
 ky	きゃ
