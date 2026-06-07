@@ -386,12 +386,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 if (mod_state & MOD_MASK_SHIFT) {
                     if (keycode == KC_MINS) {
-                        register_code(KC_MORPH);
-                    } else {
-                        del_mods(MOD_MASK_SHIFT);
-                        register_code(KC_MORPH);
-                        set_mods(mod_state);
+                        add_weak_mods(MOD_LSFT);
                     }
+                    del_mods(MOD_MASK_SHIFT);
+                    register_code(KC_MORPH);
+                    set_mods(mod_state);
                     *registered = true;
                     return false;
                 }
@@ -402,10 +401,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
             break;
         case LT(4, KC_ENT):
-            static bool is_ent_pressed = false;
+            static bool is_layer4_enabled = false;
 
             if (!record->tap.count) {
-                is_ent_pressed = record->event.pressed;
+                is_layer4_enabled = record->event.pressed;
             }
             break;
         case LT(2, KC_SPC):
@@ -420,7 +419,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         }
                         morph_type = 0;
                     }
-                    if (is_ent_pressed) {
+                    if (is_layer4_enabled) {
                         layer_on(4);
                     }
                 }

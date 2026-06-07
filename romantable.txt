@@ -2,17 +2,17 @@
 ~	〜
 .	。
 ,	、
-l/	・
-l.	…
-l,	‥
-ls	←
-ln	↓
-lh	↑
-lt	→
-l-	〜
-l[	『		DisplayAmbiguousResult
-l]	』
-l[]	『』
+x/	・
+x.	…
+x,	‥
+xr	←
+xt	↓
+xd	↑
+xs	→
+x-	〜
+x[	『		DisplayAmbiguousResult
+x]	』
+x[]	『』
 [	「
 ]	」
 va	ゔぁ
@@ -22,58 +22,47 @@ ve	ゔぇ
 vo	ゔぉ
 vy	ゔゃ
 vx	ゔぃ
-vz	ゔゅ
-vk	ゔぇ
-vq	ゔょ
-'	っ
-l	z		DisplayAmbiguousResult
-ll	l		DisplayAmbiguousResult
-ldd		ld
-lpp		lp
-lbb		lb
-lgg		lg
-lmm		lm
-lff		lf
-lvv		lv
-lc	lん		DisplayAmbiguousResult
-lcc		lc
-f		k
-kf	f		DisplayAmbiguousResult
+vj	ゔゅ
+vp	ゔぇ
+vf	ゔょ
+l	っ		DisplayAmbiguousResult
+hh	f		DisplayAmbiguousResult
+c		k
 ky	きゃ
 kx	きぃ
-kz	きゅ
-kk	きぇ
-kq	きょ
+kj	きゅ
+kp	きぇ
+kf	きょ
 gy	ぎゃ
 gx	ぎぃ
-gz	ぎゅ
-gk	ぎぇ
-gq	ぎょ
+gj	ぎゅ
+gp	ぎぇ
+gf	ぎょ
 sy	しゃ
 sx	しぃ
-sz	しゅ
-sk	しぇ
-sq	しょ
+sj	しゅ
+sp	しぇ
+sf	しょ
 sha	しゃ
 shi	し
 shu	しゅ
 she	しぇ
 sho	しょ
-ly	じゃ
-lx	じぃ
-lz	じゅ
-lk	じぇ
-lq	じょ
+zy	じゃ
+zx	じぃ
+zj	じゅ
+zp	じぇ
+zf	じょ
 ty	ちゃ
 tx	ちぃ
-tz	ちゅ
-tk	ちぇ
-tq	ちょ
+tj	ちゅ
+tp	ちぇ
+tf	ちょ
 dy	ぢゃ
 dx	ぢぃ
-dz	ぢゅ
-dk	ぢぇ
-dq	ぢょ
+dj	ぢゅ
+dp	ぢぇ
+df	ぢょ
 tsa	つぁ
 tsi	つぃ
 tse	つぇ
@@ -84,14 +73,14 @@ t'i	てぃ
 thu	てゅ
 the	てぇ
 tho	てょ
-t'z	てゅ
+t'j	てゅ
 dha	でゃ
 dhi	でぃ
 d'i	でぃ
 dhu	でゅ
 dhe	でぇ
 dho	でょ
-d'z	でゅ
+d'j	でゅ
 twa	とぁ
 twi	とぃ
 twu	とぅ
@@ -106,53 +95,53 @@ dwo	どぉ
 d'u	どぅ
 ny	にゃ
 nx	にぃ
-nz	にゅ
-nk	にぇ
-nq	にょ
+nj	にゅ
+np	にぇ
+nf	にょ
 hy	ひゃ
 hx	ひぃ
-hz	ひゅ
-hk	ひぇ
-hq	ひょ
+hj	ひゅ
+hp	ひぇ
+hf	ひょ
 by	びゃ
 bx	びぃ
-bz	びゅ
-bk	びぇ
-bq	びょ
+bj	びゅ
+bp	びぇ
+bf	びょ
 py	ぴゃ
 px	ぴぃ
-pz	ぴゅ
-pk	ぴぇ
-pq	ぴょ
-kfa	ふぁ
-kfi	ふぃ
-kfe	ふぇ
-kfu	ふ
-kfo	ふぉ
-kfy	ふゃ
-kfz	ふゅ
-kfq	ふょ
+pj	ぴゅ
+pp	ぴぇ
+pf	ぴょ
+hha	ふぁ
+hhi	ふぃ
+hhe	ふぇ
+hhu	ふ
+hho	ふぉ
+hhy	ふゃ
+hhj	ふゅ
+hhf	ふょ
 hwa	ふぁ
 hwi	ふぃ
 hwu	ふ
 hwe	ふぇ
 hwo	ふぉ
 hwy	ふゃ
-hwz	ふゅ
-hwq	ふょ
+hwj	ふゅ
+hwf	ふょ
 my	みゃ
 mx	みぃ
-mz	みゅ
-mk	みぇ
-mq	みょ
+mj	みゅ
+mp	みぇ
+mf	みょ
 ry	りゃ
 rx	りぃ
-rz	りゅ
-rk	りぇ
-rq	りょ
+rj	りゅ
+rp	りぇ
+rf	りょ
 xn	ん
-n'	ん
-c	ん
+n	ん
+'	ん
 a	あ
 i	い
 u	う
@@ -164,20 +153,18 @@ xi	ぃ
 xu	ぅ
 xe	ぇ
 xo	ぉ
-lla	ぁ
-lli	ぃ
-llu	ぅ
-lle	ぇ
-llo	ぉ
+la	ぁ
+li	ぃ
+lu	ぅ
+le	ぇ
+lo	ぉ
 ka	か
 ki	き
 ku	く
 ke	け
 ko	こ
-xf	ヵ		DisplayAmbiguousResult
-xfe	ヶ
-llf	ヵ		DisplayAmbiguousResult
-llfe	ヶ
+xc	ヵ		DisplayAmbiguousResult
+xce	ヶ
 ga	が
 gi	ぎ
 gu	ぐ
@@ -203,16 +190,16 @@ swi	すぃ
 swu	すぅ
 swe	すぇ
 swo	すぉ
-lwa	ずぁ
-lwi	ずぃ
-lwu	ずぅ
-lwe	ずぇ
-lwo	ずぉ
-la	ざ
-li	じ
-lu	ず
-le	ぜ
-lo	ぞ
+zwa	ずぁ
+zwi	ずぃ
+zwu	ずぅ
+zwe	ずぇ
+zwo	ずぉ
+za	ざ
+zi	じ
+zu	ず
+ze	ぜ
+zo	ぞ
 ta	た
 ti	ち
 tu	つ
@@ -249,17 +236,17 @@ mi	み
 mu	む
 me	め
 mo	も
-lly	ゃ
+ly	ゃ
 xy	ゃ
 y	や
 wx	ゐ
-llz	ゅ
-xz	ゅ
-z	ゆ
-wk	ゑ
-llq	ょ
-xq	ょ
-q	よ
+lj	ゅ
+xj	ゅ
+j	ゆ
+wp	ゑ
+lf	ょ
+xf	ょ
+f	よ
 ra	ら
 ri	り
 ru	る
@@ -282,7 +269,7 @@ msn	ません		DisplayAmbiguousResult
 msng	ませんが
 kt	こと
 sr	され		DisplayAmbiguousResult
-srlr	それぞれ
+srzr	それぞれ
 srtr	されている
 ss	させ		DisplayAmbiguousResult
 ssrr	させられ		DisplayAmbiguousResult
@@ -292,12 +279,12 @@ st	して		DisplayAmbiguousResult
 sth	しては
 str	している
 sn	しな		DisplayAmbiguousResult
-snfr	しなけれ		DisplayAmbiguousResult
-snfrb	しなければ
-sf	しか
+sncr	しなけれ		DisplayAmbiguousResult
+sncrb	しなければ
+sc	しか
 sg	すぎ
 sm	しま		DisplayAmbiguousResult
-smsf	しますか
+smsc	しますか
 smsg	しますが
 smsn	しません
 smst	しました
@@ -314,30 +301,30 @@ ndsg	のですが
 ng	のが
 nn	なの
 dm	でも
-df	でき
+dc	でき
 dh	では		DisplayAmbiguousResult
-dhnf	ではなく
+dhnc	ではなく
 dt	だと
 dg	だが
 gt	がち
 tr	たら
 tm	ため
 th	とは		DisplayAmbiguousResult
-tf	てき		DisplayAmbiguousResult
-tfnh	てきには
+tc	てき		DisplayAmbiguousResult
+tcnh	てきには
 td	ただ
 tb	たび
 ht	ひと
 bt	びと
 bb	べば
 br	ばれ
-lr	ざる
+zr	ざる
 nr	なる		DisplayAmbiguousResult
 nrms	なります
 nb	ねば
-nf	なか
-nl	なぜ
-rl	らず
+nc	なか
+nz	なぜ
+rz	らず
 rr	られ		DisplayAmbiguousResult
 rrtm	られても
 rb	れば
@@ -354,7 +341,7 @@ ns	なし		DisplayAmbiguousResult
 nstm	にしても
 nt	にち
 ts	たし		DisplayAmbiguousResult
-tsfn	たしかに
+tscn	たしかに
 tsth	としては
 tsrt	とすると
 tsrb	とすれば
@@ -362,14 +349,14 @@ tn	とな
 tt	たち
 tg	たが
 gr	がら
-hl	はず
+hz	はず
 hd	ほど
-wl	わず
-sl	せず
+wz	わず
+sz	せず
 ws	わせ
 rs	らせ		DisplayAmbiguousResult
 rsrr	らせられ		DisplayAmbiguousResult
 rsrrr	らせられる
 rn	らな		DisplayAmbiguousResult
-rnfr	らなけれ
-bf	べき
+rncr	らなけれ
+bc	べき
