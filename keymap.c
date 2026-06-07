@@ -96,6 +96,7 @@ void send_report_user(uint16_t keycode) {
         }
     }
     prev_key = keycode;
+    send_keyboard_report();
 }
 
 void tap_code_attached(uint16_t keycode, bool shifted) {
@@ -210,7 +211,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case KC_MS_BTN1:
         case KC_MS_BTN2:
         case KC_MS_BTN3:
-            if (record->event.pressed && is_mod_pending) {
+            if (record->event.pressed) {
+                clear_weak_mods();
+                if (!is_mod_pending) {
+                    return true;
+                }
                 report_mouse_t mouse_report = pointing_device_get_report();
 
                 mts_mods_on();
