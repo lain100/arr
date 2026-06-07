@@ -16,9 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
-#include <stdio.h>
-#include <sys/types.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -36,14 +33,14 @@ typedef struct {
 } rt_t;
 
 mt_t mts[] = {
-    { LGUI_T(KC_R) },
-    { LALT_T(KC_S) },
-    { LSFT_T(KC_N) },
-    { LCTL_T(KC_T) },
-    { RCTL_T(KC_O) },
+    { LGUI_T(KC_N) },
+    { LALT_T(KC_R) },
+    { LSFT_T(KC_T) },
+    { LCTL_T(KC_S) },
+    { RCTL_T(KC_H) },
     { RSFT_T(KC_A) },
-    { RALT_T(KC_I) },
-    { RGUI_T(KC_E) },
+    { RALT_T(KC_E) },
+    { RGUI_T(KC_I) },
     { RCTL_T(KC_8) },
     { RSFT_T(KC_7) },
     { RALT_T(KC_9) },
@@ -85,7 +82,6 @@ void send_report_user(uint16_t keycode) {
     };
     static uint16_t prev_key = 0;
 
-    send_keyboard_report();
     for (uint8_t i = 0; i < ARRAY_SIZE(brcts); i++) {
         if (keycode == brcts[i][1]) {
             if (prev_key == brcts[i][0]) {
@@ -115,18 +111,17 @@ void tap_code_attached(uint16_t keycode, bool shifted) {
 
 void roll_taps_processed(uint16_t keycode) {
     static rt_t rts[] = {
-        { LGUI_T(KC_R), { 1, 2 }, 2 },
-        { LALT_T(KC_S), { 0, 3 }, 2 },
-        { LCTL_T(KC_T), { 1 }, 1 },
+        { LGUI_T(KC_N), { 1, 2 }, 2 },
+        { LALT_T(KC_R), { 0, 3 }, 2 },
+        { LCTL_T(KC_S), { 1 }, 1 },
         { RSFT_T(KC_A), { 6 }, 1 },
-        { RALT_T(KC_I), { 5, 7 }, 2 },
-        { RGUI_T(KC_E), { 6 }, 1 },
+        { RALT_T(KC_E), { 5, 7 }, 2 },
+        { RGUI_T(KC_I), { 6 }, 1 },
         { RALT_T(KC_9), { 8 }, 1 },
-        { KC_H, { 1, 3 }, 2 },
-        { KC_D, { 1, 2 }, 2 },
-        { KC_F, { 1 }, 1 },
-        { KC_U, { 4 }, 1 },
-        { KC_Y, { 5 }, 1 },
+        { KC_D, { 1, 3 }, 2 },
+        { KC_Z, { 1, 2 }, 2 },
+        { KC_C, { 1 }, 1 },
+        { KC_O, { 4 }, 1 },
     };
 
     for (uint8_t i = 0; i < ARRAY_SIZE(rts); i++) {
@@ -306,14 +301,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 tap_code(record->tap.count ? KC_LNG2 : KC_CAPS);
             }
             return false;
-        case LT(0, KC_CAPS_WORD):
+        case KC_CAPS_WORD:
             if (record->event.pressed) {
-                if (record->tap.count) {
-                    tap_code_attached(KC_N, 0);
-                    tap_code_attached(KC_A, 0);
-                } else {
-                    caps_word_on();
-                }
+                caps_word_on();
             }
             return false;
         case KC_LEFT:
@@ -381,28 +371,32 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case KC_BSPC:
         case KC_COMM:
-        case S(KC_7):
+        case KC_MINS:
             static bool bspc_registered = false;
             static bool comm_registered = false;
-            static bool quot_registered = false;
+            static bool mins_registered = false;
             bool    *registered =       (keycode == KC_BSPC) ?
                     &bspc_registered : ((keycode == KC_COMM) ?
-                    &comm_registered : &quot_registered);
-            uint16_t code =   (keycode == KC_BSPC) ?
-                    KC_DEL : ((keycode == KC_COMM) ?
-                    KC_DOT : KC_MINS);
+                    &comm_registered : &mins_registered);
+            uint16_t KC_MORPH = (keycode == KC_BSPC) ?
+                    KC_DEL :   ((keycode == KC_COMM) ?
+                    KC_DOT : KC_INT1);
             uint8_t mod_state = get_mods();
 
             if (record->event.pressed) {
                 if (mod_state & MOD_MASK_SHIFT) {
-                    del_mods(MOD_MASK_SHIFT);
-                    register_code(code);
+                    if (keycode == KC_MINS) {
+                        register_code(KC_MORPH);
+                    } else {
+                        del_mods(MOD_MASK_SHIFT);
+                        register_code(KC_MORPH);
+                        set_mods(mod_state);
+                    }
                     *registered = true;
-                    set_mods(mod_state);
                     return false;
                 }
             } else if (*registered) {
-                unregister_code(code);
+                unregister_code(KC_MORPH);
                 *registered = false;
                 return false;
             }
@@ -474,14 +468,14 @@ enum combos {
     CMB_CAPS_WORD,
 };
 
-const uint16_t PROGMEM cmb_app[] = {KC_G, KC_M, COMBO_END};
-const uint16_t PROGMEM cmb_int4[] = {KC_G, KC_F, COMBO_END};
-const uint16_t PROGMEM cmb_lngs[] = {KC_M, KC_F, COMBO_END};
+const uint16_t PROGMEM cmb_app[] = {KC_Z, KC_M, COMBO_END};
+const uint16_t PROGMEM cmb_int4[] = {KC_Z, KC_C, COMBO_END};
+const uint16_t PROGMEM cmb_lngs[] = {KC_M, KC_C, COMBO_END};
 const uint16_t PROGMEM cmb_pscr[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_END};
-const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_N), LCTL_T(KC_T), COMBO_END};
-const uint16_t PROGMEM cmb_ms_btn2[] = {LALT_T(KC_S), LSFT_T(KC_N), COMBO_END};
-const uint16_t PROGMEM cmb_ms_btn3[] = {LALT_T(KC_S), LCTL_T(KC_T), COMBO_END};
-const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_N), RSFT_T(KC_A), COMBO_END};
+const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_T), LCTL_T(KC_S), COMBO_END};
+const uint16_t PROGMEM cmb_ms_btn2[] = {LALT_T(KC_R), LSFT_T(KC_T), COMBO_END};
+const uint16_t PROGMEM cmb_ms_btn3[] = {LALT_T(KC_R), LCTL_T(KC_S), COMBO_END};
+const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_T), RSFT_T(KC_A), COMBO_END};
 
 combo_t key_combos[] = {
     [CMB_APP] = COMBO(cmb_app, KC_APP),
@@ -491,8 +485,16 @@ combo_t key_combos[] = {
     [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
     [CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
     [CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
-    [CMB_CAPS_WORD] = COMBO(cmb_caps_word, LT(0, KC_CAPS_WORD)),
+    [CMB_CAPS_WORD] = COMBO(cmb_caps_word, KC_CAPS_WORD),
 };
+
+bool get_combo_must_hold(uint16_t combo_index, combo_t *combo) {
+    switch (combo_index) {
+        case CMB_CAPS_WORD:
+            return true;
+    }
+    return false;
+}
 
 bool caps_word_press_user(uint16_t keycode) {
     switch (keycode) {

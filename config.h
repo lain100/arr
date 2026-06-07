@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define TAPPING_TERM 150
 #define TAPPING_TERM_PER_KEY
 #define QUICK_TAP_TERM_PER_KEY
+#define COMBO_MUST_HOLD_PER_COMBO
 
 #define KEYBALL_SCROLLSNAP_TENSION_THRESHOLD 20
 #define KEYBALL_SCROLLSNAP_RESET_TIMER 200
