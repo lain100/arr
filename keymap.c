@@ -147,7 +147,6 @@ void roll_taps_processed(uint16_t keycode) {
 
 enum my_keycodes {
     KC_LNGS = SAFE_RANGE,
-    KC_CAPS_WORD,
 };
 enum arrowkeys_types {
     TAB_MORPH = 1,
@@ -208,9 +207,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
 
     switch (keycode) {
-        case KC_MS_BTN1:
-        case KC_MS_BTN2:
-        case KC_MS_BTN3:
+        case KC_MS_BTN1 ... KC_MS_BTN3:
             if (record->event.pressed) {
                 clear_weak_mods();
                 if (!is_mod_pending) {
@@ -231,8 +228,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT(0, KC_F15):
             if (record->event.pressed) {
-                if (record->tap.count) {
+                if (record->tap.count == 1) {
                     morph_type = CTRL_YanZ_MORPH;
+                } else if (record->tap.count) {
+                    uint8_t saved_mods = get_mods();
+
+                    del_mods(saved_mods);
+                    add_weak_mods(MOD_LCTL);
+                    tap_code(KC_X);
+                    set_mods(saved_mods);
                 } else {
                     add_weak_mods(MOD_LALT);
                     tap_code(KC_F4);
@@ -245,7 +249,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             uint8_t mod  =  (keycode == LT(0, KC_F16)) ?
                 MOD_LALT : ((keycode == LT(0, KC_F17)) ?
                 MOD_LSFT : MOD_LCTL);
-            uint16_t KC_CanV = 0;
+            uint16_t KC_EDIT = 0;
 
             if (record->event.pressed) {
                 if (record->tap.count == 1) {
@@ -262,24 +266,24 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         tap_code(KC_ESC);
                         morph_type = WWW_MORPH;
                     } else if (keycode == LT(0, KC_F17)) {
-                        KC_CanV = KC_V;
+                        KC_EDIT = KC_V;
                     } else {
                         morph_type = CTRL_TAB_MORPH;
                     }
                     unregister_mods(mod);
                 } else {
                     if (keycode == LT(0, KC_F16)) {
-                        KC_CanV = KC_C;
+                        KC_EDIT = KC_C;
                     } else {
                         tap_code((keycode == LT(0,KC_F17)) ? KC_F14 : KC_F16);
                     }
                 }
-                if (KC_CanV) {
+                if (KC_EDIT) {
                     uint8_t saved_mods = get_mods();
 
                     del_mods(saved_mods);
                     add_weak_mods(MOD_LCTL);
-                    tap_code(KC_CanV);
+                    tap_code(KC_EDIT);
                     set_mods(saved_mods);
                 }
             }
@@ -304,11 +308,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(0, KC_LNGS):
             if (record->event.pressed) {
                 tap_code(record->tap.count ? KC_LNG2 : KC_CAPS);
-            }
-            return false;
-        case KC_CAPS_WORD:
-            if (record->event.pressed) {
-                caps_word_on();
             }
             return false;
         case KC_LEFT:
@@ -489,7 +488,7 @@ combo_t key_combos[] = {
     [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
     [CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
     [CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
-    [CMB_CAPS_WORD] = COMBO(cmb_caps_word, KC_CAPS_WORD),
+    [CMB_CAPS_WORD] = COMBO(cmb_caps_word, QK_CAPS_WORD_TOGGLE),
 };
 
 bool get_combo_must_hold(uint16_t combo_index, combo_t *combo) {
@@ -509,7 +508,7 @@ bool caps_word_press_user(uint16_t keycode) {
         case KC_1 ... KC_0:
         case KC_BSPC:
         case KC_MINS:
-        case S(KC_BSPC):
+        case S(KC_7):
         case S(KC_INT1):
             return true;
     }
