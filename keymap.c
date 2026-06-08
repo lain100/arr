@@ -374,16 +374,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return false;
             }
             break;
-        case KC_BSPC:
+        case S(KC_7):
         case KC_COMM:
         case KC_MINS:
-            static bool bspc_registered = false;
+            static bool quot_registered = false;
             static bool comm_registered = false;
             static bool mins_registered = false;
-            bool    *registered =       (keycode == KC_BSPC) ?
-                    &bspc_registered : ((keycode == KC_COMM) ?
+            bool    *registered =       (keycode == S(KC_7)) ?
+                    &quot_registered : ((keycode == KC_COMM) ?
                     &comm_registered : &mins_registered);
-            uint16_t KC_MORPH = (keycode == KC_BSPC) ?
+            uint16_t KC_MORPH = (keycode == S(KC_7)) ?
                     KC_DEL :   ((keycode == KC_COMM) ?
                     KC_DOT : KC_INT1);
             uint8_t mod_state = get_mods();
