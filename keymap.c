@@ -513,19 +513,16 @@ bool caps_word_press_user(uint16_t keycode) {
         case KC_A ... KC_Z:
             add_weak_mods(MOD_LSFT);
             return true;
-
         case KC_1 ... KC_0:
         case KC_BSPC:
         case KC_MINS:
         case S(KC_7):
-        case S(KC_INT1):
             return true;
     }
     return false;
 }
 
 #define COMBO_REF_DEFAULT 0
-#define LAYER_CLEAR_ACTIVATE_THRESHOLD 10
 
 uint8_t combo_ref_from_layer(uint8_t layer) {
     switch (get_highest_layer(layer_state)) {
@@ -535,14 +532,8 @@ uint8_t combo_ref_from_layer(uint8_t layer) {
 }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    uint16_t total_move = abs(mouse_report.x) + abs(mouse_report.y);
-
-    if (total_move) {
+    if (abs(mouse_report.x) + abs(mouse_report.y)) {
         mts_mods_on();
-    }
-    if (total_move > LAYER_CLEAR_ACTIVATE_THRESHOLD &&
-        get_highest_layer(layer_state) != 1) {
-        layer_clear();
     }
     return mouse_report;
 }
