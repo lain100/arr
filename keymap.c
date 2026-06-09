@@ -226,11 +226,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     mts_mods_on();
 
     switch (keycode) {
+        case LT(0, KC_APP):
+            if (record->event.pressed &&
+                    !record->tap.count) {
+                add_weak_mods(MOD_LCTL);
+                tap_code(KC_PSCR);
+                return false;
+            }
+            break;
         case LT(0, KC_F15):
             if (record->event.pressed) {
                 if (record->tap.count == 1) {
                     morph_type = CTRL_YanZ_MORPH;
                 } else if (record->tap.count) {
+                    morph_type = 0;
                     uint8_t saved_mods = get_mods();
 
                     del_mods(saved_mods);
@@ -291,7 +300,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(0, KC_F19):
             if (record->event.pressed) {
                 morph_type = record->tap.count == 1 ?
-                    TAB_MORPH : (record->tap.count ? FOUR_MOVES_MORPH : VOL_MORPH);
+                    TAB_MORPH : (record->tap.count ? VOL_MORPH : FOUR_MOVES_MORPH);
             }
             return false;
         case LT(0, KC_F20):
@@ -481,10 +490,10 @@ const uint16_t PROGMEM cmb_ms_btn3[] = {LALT_T(KC_R), LCTL_T(KC_S), COMBO_END};
 const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_T), RSFT_T(KC_A), COMBO_END};
 
 combo_t key_combos[] = {
-    [CMB_APP] = COMBO(cmb_app, KC_APP),
+    [CMB_APP] = COMBO(cmb_app, LT(0, KC_APP)),
     [CMB_INT4] = COMBO(cmb_int4, KC_INT4),
     [CMB_LNGS] = COMBO(cmb_lngs, LT(0, KC_LNGS)),
-    [CMB_PSCR] = COMBO(cmb_pscr, LT(0, KC_PSCR)),
+    [CMB_PSCR] = COMBO(cmb_pscr, KC_PSCR),
     [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
     [CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
     [CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
@@ -543,6 +552,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case LT(0, KC_F20):
         case LT(2, KC_SPC):
         case LT(4, KC_ENT):
+        case LT(0, KC_APP):
         case LT(0, KC_LNGS):
             return TAPPING_TERM + 50;
     }
