@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <sys/types.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -30,8 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 )
 
 #define IS_QUICK_SUCCESSION_INPUT(k1, r, k2) (          \
-    get_highest_layer(layer_state) == 0                 \
-    && IS_HOMEROW_CAG((k1), (r))                        \
+    IS_HOMEROW_CAG((k1), (r))                           \
+    && QK_MOD_TAP_GET_TAP_KEYCODE((k1)) <= KC_Z         \
     && QK_MOD_TAP_GET_TAP_KEYCODE((k2)) <= KC_Z         \
     && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
 )
@@ -125,12 +126,12 @@ void mts_mods_on(void) {
 void send_report_user(uint16_t keycode) {
     static const uint16_t brcts[][2] = {
         { RSFT_T(KC_QUOT), RSFT_T(KC_QUOT) },
-        { RCTL_T(KC_9), RALT_T(KC_0) },
-        { S(KC_QUOT),   S(KC_QUOT)   },
-        { S(KC_LBRC),   S(KC_RBRC)   },
-        { S(KC_COMM),   S(KC_DOT)    },
-        { S(KC_GRV),    S(KC_GRV)    },
-        { KC_LBRC,      KC_RBRC      },
+        { RCTL_T(KC_9),    RALT_T(KC_0)    },
+        { S(KC_QUOT),      S(KC_QUOT)      },
+        { S(KC_LBRC),      S(KC_RBRC)      },
+        { S(KC_COMM),      S(KC_DOT)       },
+        { KC_LBRC,         KC_RBRC         },
+        { KC_GRV,          KC_GRV          },
     };
     static uint16_t prev_key = 0;
 
@@ -381,8 +382,11 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case MY_INT4:
             if (record->event.pressed) {
                 add_weak_mods(MOD_LGUI);
-                tap_code(KC_SLSH);
+                register_code(KC_SLSH);
+            } else {
+                unregister_code(KC_SLSH);
             }
+            return false;
         case KC_LEFT:
         case KC_RGHT:
             if (record->event.pressed) {
@@ -528,8 +532,8 @@ void matrix_scan_user(void) {
 
 enum combos {
     CMB_APP,
-    CMB_INT4,
     CMB_LNGS,
+    CMB_INT4,
     CMB_PSCR,
     CMB_MS_BTN1,
     CMB_MS_BTN2,
@@ -538,8 +542,8 @@ enum combos {
 };
 
 const uint16_t PROGMEM cmb_app[] = {KC_Z, KC_M, COMBO_END};
-const uint16_t PROGMEM cmb_int4[] = {KC_Z, KC_C, COMBO_END};
 const uint16_t PROGMEM cmb_lngs[] = {KC_M, KC_C, COMBO_END};
+const uint16_t PROGMEM cmb_int4[] = {KC_Z, KC_C, COMBO_END};
 const uint16_t PROGMEM cmb_pscr[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_T), LCTL_T(KC_S), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn2[] = {LALT_T(KC_R), LSFT_T(KC_T), COMBO_END};
@@ -548,8 +552,8 @@ const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_T), RSFT_T(KC_A), COMBO_END}
 
 combo_t key_combos[] = {
     [CMB_APP] = COMBO(cmb_app, LT(0, KC_APP)),
-    [CMB_INT4] = COMBO(cmb_int4, MY_INT4),
     [CMB_LNGS] = COMBO(cmb_lngs, LT(0, KC_LNGS)),
+    [CMB_INT4] = COMBO(cmb_int4, MY_INT4),
     [CMB_PSCR] = COMBO(cmb_pscr, KC_PSCR),
     [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
     [CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
