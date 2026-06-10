@@ -30,7 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 )
 
 #define IS_QUICK_SUCCESSION_INPUT(k1, r, k2) (          \
-    IS_HOMEROW_CAG((k1), (r))                           \
+    get_highest_layer(layer_state) == 0                 \
+    && IS_HOMEROW_CAG((k1), (r))                        \
     && QK_MOD_TAP_GET_TAP_KEYCODE((k2)) <= KC_Z         \
     && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
 )
@@ -93,9 +94,8 @@ mt_t mts[] = {
     { RSFT_T(KC_A) },
     { RALT_T(KC_E) },
     { RGUI_T(KC_I) },
-    { RCTL_T(KC_8) },
-    { RSFT_T(KC_7) },
-    { RALT_T(KC_9) },
+    { RCTL_T(KC_9) },
+    { RALT_T(KC_0) },
     { RGUI_T(KC_3) },
 };
 
@@ -124,13 +124,13 @@ void mts_mods_on(void) {
 
 void send_report_user(uint16_t keycode) {
     static const uint16_t brcts[][2] = {
-        { RCTL_T(KC_8), RALT_T(KC_9) },
-        { RSFT_T(KC_7), RSFT_T(KC_7) },
-        { S(KC_RBRC),   S(KC_BSLS)   },
-        { S(KC_LBRC),   S(KC_LBRC)   },
+        { RSFT_T(KC_QUOT), RSFT_T(KC_QUOT) },
+        { RCTL_T(KC_9), RALT_T(KC_0) },
+        { S(KC_QUOT),   S(KC_QUOT)   },
+        { S(KC_LBRC),   S(KC_RBRC)   },
         { S(KC_COMM),   S(KC_DOT)    },
-        { S(KC_2),      S(KC_2)      },
-        { KC_RBRC,      KC_BSLS      },
+        { S(KC_GRV),    S(KC_GRV)    },
+        { KC_LBRC,      KC_RBRC      },
     };
     static uint16_t prev_key = 0;
 
@@ -170,7 +170,7 @@ void roll_taps_processed(uint16_t keycode) {
         { RSFT_T(KC_A), { 6 }, 1 },
         { RALT_T(KC_E), { 5, 7 }, 2 },
         { RGUI_T(KC_I), { 6 }, 1 },
-        { RALT_T(KC_9), { 8 }, 1 },
+        { RALT_T(KC_0), { 8 }, 1 },
         { KC_D, { 1, 3 }, 2 },
         { KC_Z, { 1, 2 }, 2 },
         { KC_C, { 1 }, 1 },
@@ -183,7 +183,7 @@ void roll_taps_processed(uint16_t keycode) {
                 mt_t *mt = &mts[rts[i].indexes[j]];
 
                 if (mt->interrupted || mt->shifted) {
-                    tap_code_attached(mt->keycode, keycode == RALT_T(KC_9));
+                    tap_code_attached(mt->keycode, keycode == RALT_T(KC_0));
                     mt->interrupted = false;
                     mt->shifted = false;
                     break;
@@ -199,6 +199,7 @@ void roll_taps_processed(uint16_t keycode) {
 
 enum my_keycodes {
     KC_LNGS = SAFE_RANGE,
+    MY_INT4,
 };
 enum arrowkeys_types {
     TAB_MORPH = 1,
@@ -368,9 +369,20 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case LT(0, KC_LNGS):
             if (record->event.pressed) {
-                tap_code(record->tap.count ? KC_LNG2 : KC_CAPS);
+                add_weak_mods(MOD_LALT);
+                tap_code(KC_GRAVE);
+                if (record->tap.count) {
+                    caps_word_off();
+                } else {
+                    caps_word_on();
+                }
             }
             return false;
+        case MY_INT4:
+            if (record->event.pressed) {
+                add_weak_mods(MOD_LGUI);
+                tap_code(KC_SLSH);
+            }
         case KC_LEFT:
         case KC_RGHT:
             if (record->event.pressed) {
@@ -434,25 +446,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return false;
             }
             break;
-        case S(KC_7):
+        case KC_QUOT:
         case KC_COMM:
-        case KC_MINS:
             static bool quot_registered = false;
             static bool comm_registered = false;
-            static bool mins_registered = false;
-            bool    *registered =       (keycode == S(KC_7)) ?
-                    &quot_registered : ((keycode == KC_COMM) ?
-                    &comm_registered : &mins_registered);
-            uint16_t KC_MORPH = (keycode == S(KC_7)) ?
-                    KC_DEL :   ((keycode == KC_COMM) ?
-                    KC_DOT : KC_INT1);
+            bool    *registered = (keycode == KC_QUOT) ?
+                    &quot_registered : &comm_registered;
+            uint16_t KC_MORPH = (keycode == KC_QUOT) ?
+                    KC_DEL : KC_DOT;
             uint8_t mod_state = get_mods();
 
             if (record->event.pressed) {
                 if (mod_state & MOD_MASK_SHIFT) {
-                    if (keycode == KC_MINS) {
-                        add_weak_mods(MOD_LSFT);
-                    }
                     del_mods(MOD_MASK_SHIFT);
                     register_code(KC_MORPH);
                     set_mods(mod_state);
@@ -543,7 +548,7 @@ const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_T), RSFT_T(KC_A), COMBO_END}
 
 combo_t key_combos[] = {
     [CMB_APP] = COMBO(cmb_app, LT(0, KC_APP)),
-    [CMB_INT4] = COMBO(cmb_int4, KC_INT4),
+    [CMB_INT4] = COMBO(cmb_int4, MY_INT4),
     [CMB_LNGS] = COMBO(cmb_lngs, LT(0, KC_LNGS)),
     [CMB_PSCR] = COMBO(cmb_pscr, KC_PSCR),
     [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
@@ -563,12 +568,14 @@ bool get_combo_must_hold(uint16_t combo_index, combo_t *combo) {
 bool caps_word_press_user(uint16_t keycode) {
     switch (keycode) {
         case KC_A ... KC_Z:
+        case KC_QUOT:
             add_weak_mods(MOD_LSFT);
             return true;
         case KC_1 ... KC_0:
+        case KC_EQL:
         case KC_BSPC:
         case KC_MINS:
-        case S(KC_7):
+        case S(KC_MINS):
             return true;
     }
     return false;
