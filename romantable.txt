@@ -366,3 +366,4 @@ rsrrr	らせられる
 rn	らな		DisplayAmbiguousResult
 rncr	らなけれ
 bc	べき
+"	ン
