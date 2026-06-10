@@ -387,44 +387,65 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 unregister_code(KC_SLSH);
             }
             return false;
+        case KC_UP:
+        case KC_DOWN:
         case KC_LEFT:
         case KC_RGHT:
-            if (record->event.pressed) {
-                if (arrowkeys_registered) {
-                    unregister_code(morph_code);
-                    arrowkeys_registered = false;
+            if (arrowkeys_registered) {
+                unregister_code(morph_code);
+                arrowkeys_registered = false;
+                if (!record->event.pressed) {
+                    return false;
                 }
-                uint8_t saved_mods = 0;
+            }
+            if (record->event.pressed) {
+                uint8_t saved_mods = get_mods();
 
+                switch (keycode) {
+                    case KC_UP:
+                        switch (morph_type) {
+                            case VOL_MORPH:
+                            case WWW_MORPH:
+                                return true;
+                        }
+                    case KC_DOWN:
+                        switch (morph_type) {
+                            case TAB_MORPH:
+                            case CTRL_YanZ_MORPH:
+                                return true;
+                        }
+                }
                 switch (morph_type) {
                     case TAB_MORPH:
                     case CTRL_TAB_MORPH:
-                        if (record->event.pressed) {
-                            if (keycode == KC_LEFT) {
-                                add_weak_mods(MOD_LSFT);
-                            }
-                            if (morph_type == CTRL_TAB_MORPH) {
-                                add_weak_mods(MOD_LCTL);
-                                saved_mods = get_mods();
-                            }
+                        switch (keycode) {
+                            case KC_UP:   morph_code = KC_PGUP;
+                                break;
+                            case KC_DOWN: morph_code = KC_PGDN;
+                                break;
+                            case KC_LEFT: add_weak_mods(MOD_LSFT);
+                            case KC_RGHT: morph_code = KC_TAB;
+                                if (morph_type == CTRL_TAB_MORPH) {
+                                    clear_mods();
+                                    add_weak_mods(MOD_LCTL);
+                                }
                         }
-                        morph_code = KC_TAB;
                         break;
                     case CTRL_YanZ_MORPH:
-                        if (record->event.pressed) {
-                            add_weak_mods(MOD_LCTL);
-                            saved_mods = get_mods();
-                        }
+                        clear_mods();
+                        add_weak_mods(MOD_LCTL);
                         morph_code = (keycode == KC_LEFT) ?
                             KC_Z : KC_Y;
                         break;
                     case VOL_MORPH:
-                        morph_code = (keycode == KC_LEFT) ?
-                            KC_VOLD : KC_VOLU;
+                        morph_code =   (keycode == KC_DOWN) ?
+                            KC_MUTE : ((keycode == KC_LEFT) ?
+                            KC_VOLD : KC_VOLU);
                         break;
                     case WWW_MORPH:
-                        morph_code = (keycode == KC_LEFT) ?
-                            KC_WBAK : KC_WFWD;
+                        morph_code =   (keycode == KC_DOWN) ?
+                            KC_WHOM : ((keycode == KC_LEFT) ?
+                            KC_WBAK : KC_WFWD);
                         break;
                     case FOUR_MOVES_MORPH:
                         four_moves(keycode);
@@ -435,18 +456,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     default:
                         return true;
                 }
-                if (saved_mods) {
-                    del_mods(saved_mods);
-                    register_code(morph_code);
-                    set_mods(saved_mods);
-                } else {
-                    register_code(morph_code);
-                }
+                register_code(morph_code);
+                set_mods(saved_mods);
                 arrowkeys_registered = true;
-                return false;
-            } else if (arrowkeys_registered) {
-                unregister_code(morph_code);
-                arrowkeys_registered = false;
                 return false;
             }
             break;
