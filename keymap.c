@@ -20,6 +20,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "quantum.h"
 
+#define HOMEROW_MASK ((1U << 1) | (1U << 5))
+#define IS_HOMEROW(r) (HOMEROW_MASK & (1U << ((r)->event.key.row)))
+
+#define IS_HOMEROW_CAG(k, r) (          \
+    ((k) & (QK_LCTL|QK_LALT|QK_LGUI))   \
+    && IS_QK_MOD_TAP((k))               \
+    && IS_HOMEROW((r))                  \
+)
+
+#define IS_QUICK_SUCCESSION_INPUT(k1, r, k2) (          \
+    IS_HOMEROW_CAG((k1), (r))                           \
+    && QK_MOD_TAP_GET_TAP_KEYCODE((k2)) <= KC_Z         \
+    && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
+)
+
+typedef struct {
+    uint8_t index;
+    uint8_t bitmask;
+} tap_bit_t;
+
+#define TAP_BIT_FROM_KEYCODE(k)                                 \
+    ((tap_bit_t){                                               \
+        .index   = QK_MOD_TAP_GET_TAP_KEYCODE((k)) / 8,         \
+        .bitmask = (1U << QK_MOD_TAP_GET_TAP_KEYCODE((k)) % 8)  \
+     })
+
+static uint8_t pressed_keys[32];
+
+static uint16_t    inter_keycode;
+static keyrecord_t inter_record;
+
+bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        if (IS_QUICK_SUCCESSION_INPUT(keycode, record, inter_keycode)) {
+            tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
+            pressed_keys[tap.index] |= tap.bitmask;
+            record->keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
+        }
+
+        inter_keycode = keycode;
+        inter_record  = *record;
+    } else {
+        tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
+
+        if (pressed_keys[tap.index] & tap.bitmask) {
+            pressed_keys[tap.index] &= ~tap.bitmask;
+            record->tap.count++;
+        }
+    }
+    return true;
+}
+
 typedef struct {
     uint16_t keycode;
     bool interrupted;
