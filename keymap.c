@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -494,7 +493,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (!record->tap.count) {
                 layer_clear();
                 if (!record->event.pressed) {
-                    unregister_mods(MOD_LALT | MOD_LSFT | MOD_LCTL);
+                    unregister_mods(MOD_MEH);
                     if (morph_type) {
                         if (arrowkeys_registered) {
                             unregister_code(morph_code);
