@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <sys/types.h>
+#include <stdint.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -132,24 +132,22 @@ void send_report_user(uint16_t keycode) {
         { S(KC_COMM),      S(KC_DOT)       },
         { KC_LBRC,         KC_RBRC         },
         { KC_GRV,          KC_GRV          },
+        { 0,               0               },
     };
-    static uint16_t prev_key = 0;
+    static const uint8_t null_id = ARRAY_SIZE(brcts) - 1;
+    static uint8_t reception_id = null_id;
 
-    for (uint8_t i = 0; i < ARRAY_SIZE(brcts); i++) {
-        if (keycode == brcts[i][1]) {
-            if (prev_key == brcts[i][0]) {
-                uint8_t saved_weak_mods = get_weak_mods();
-
-                del_weak_mods(MOD_LSFT);
-                tap_code(KC_LEFT);
-                set_weak_mods(saved_weak_mods);
-                keycode = 0;
-            }
-            break;
+    if (keycode == brcts[reception_id][1]) {
+        del_weak_mods(MOD_LSFT);
+        tap_code(KC_LEFT);
+        reception_id = null_id;
+        return;
+    }
+    for (reception_id = 0; reception_id < null_id; reception_id++) {
+        if (keycode == brcts[reception_id][0]) {
+            return;
         }
     }
-    prev_key = keycode;
-    send_keyboard_report();
 }
 
 void tap_code_attached(uint16_t keycode, bool shifted) {
@@ -263,7 +261,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case KC_MS_BTN1 ... KC_MS_BTN3:
             if (record->event.pressed) {
-                clear_weak_mods();
                 if (!is_mod_pending) {
                     return true;
                 }
@@ -608,6 +605,7 @@ uint8_t combo_ref_from_layer(uint8_t layer) {
 }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    clear_weak_mods();
     if (abs(mouse_report.x) + abs(mouse_report.y)) {
         mts_mods_on();
     }
