@@ -53,6 +53,12 @@ static uint16_t    inter_keycode;
 static keyrecord_t inter_record;
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (inter_keycode == LT(2, KC_SPC)) {
+        if (!record->event.pressed) {
+            inter_keycode = 0;
+        }
+        return true;
+    }
     if (record->event.pressed) {
         if (IS_QUICK_SUCCESSION_INPUT(keycode, record, inter_keycode)) {
             tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
@@ -540,33 +546,33 @@ void matrix_scan_user(void) {
 
 enum combos {
     CMB_APP,
-    CMB_LNGS,
-    CMB_INT4,
     CMB_PSCR,
+    CMB_INT4,
+    CMB_LNGS,
     CMB_MS_BTN1,
     CMB_MS_BTN2,
     CMB_MS_BTN3,
     CMB_CAPS_WORD,
 };
 
-const uint16_t PROGMEM cmb_app[] = {KC_Z, KC_M, COMBO_END};
-const uint16_t PROGMEM cmb_lngs[] = {KC_M, KC_C, COMBO_END};
-const uint16_t PROGMEM cmb_int4[] = {KC_Z, KC_C, COMBO_END};
-const uint16_t PROGMEM cmb_pscr[] = {LT(0, KC_F16), LT(0, KC_F18), COMBO_END};
-const uint16_t PROGMEM cmb_ms_btn1[] = {LSFT_T(KC_T), LCTL_T(KC_S), COMBO_END};
-const uint16_t PROGMEM cmb_ms_btn2[] = {LALT_T(KC_R), LSFT_T(KC_T), COMBO_END};
-const uint16_t PROGMEM cmb_ms_btn3[] = {LALT_T(KC_R), LCTL_T(KC_S), COMBO_END};
+const uint16_t PROGMEM cmb_app[]       = {KC_Z,         KC_M,         COMBO_END};
+const uint16_t PROGMEM cmb_pscr[]      = {KC_M,         KC_C,         COMBO_END};
+const uint16_t PROGMEM cmb_int4[]      = {KC_Z,         KC_C,         COMBO_END};
+const uint16_t PROGMEM cmb_lngs[]      = {LCTL_T(KC_S), KC_G,         COMBO_END};
+const uint16_t PROGMEM cmb_ms_btn1[]   = {LSFT_T(KC_T), LCTL_T(KC_S), COMBO_END};
+const uint16_t PROGMEM cmb_ms_btn2[]   = {LALT_T(KC_R), LSFT_T(KC_T), COMBO_END};
+const uint16_t PROGMEM cmb_ms_btn3[]   = {LALT_T(KC_R), LCTL_T(KC_S), COMBO_END};
 const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_T), RSFT_T(KC_A), COMBO_END};
 
 combo_t key_combos[] = {
-    [CMB_APP] = COMBO(cmb_app, LT(0, KC_APP)),
-    [CMB_LNGS] = COMBO(cmb_lngs, LT(0, KC_LNGS)),
-    [CMB_INT4] = COMBO(cmb_int4, MY_INT4),
-    [CMB_PSCR] = COMBO(cmb_pscr, KC_PSCR),
-    [CMB_MS_BTN1] = COMBO(cmb_ms_btn1, KC_MS_BTN1),
-    [CMB_MS_BTN2] = COMBO(cmb_ms_btn2, KC_MS_BTN2),
-    [CMB_MS_BTN3] = COMBO(cmb_ms_btn3, KC_MS_BTN3),
-    [CMB_CAPS_WORD] = COMBO(cmb_caps_word, QK_CAPS_WORD_TOGGLE),
+    [CMB_APP]        = COMBO(cmb_app,       LT(0, KC_APP)),
+    [CMB_PSCR]       = COMBO(cmb_pscr,      KC_PSCR),
+    [CMB_INT4]       = COMBO(cmb_int4,      MY_INT4),
+    [CMB_LNGS]       = COMBO(cmb_lngs,      LT(0, KC_LNGS)),
+    [CMB_MS_BTN1]    = COMBO(cmb_ms_btn1,   KC_MS_BTN1),
+    [CMB_MS_BTN2]    = COMBO(cmb_ms_btn2,   KC_MS_BTN2),
+    [CMB_MS_BTN3]    = COMBO(cmb_ms_btn3,   KC_MS_BTN3),
+    [CMB_CAPS_WORD]  = COMBO(cmb_caps_word, QK_CAPS_WORD_TOGGLE),
 };
 
 bool get_combo_must_hold(uint16_t combo_index, combo_t *combo) {
@@ -595,12 +601,15 @@ bool caps_word_press_user(uint16_t keycode) {
 }
 
 #define COMBO_REF_DEFAULT 0
+#define COMBO_REF_MASK ((1U << 2) | (1U << 4))
 
 uint8_t combo_ref_from_layer(uint8_t layer) {
-    switch (get_highest_layer(layer_state)) {
-        case 2: return 2;
-        default: return COMBO_REF_DEFAULT;
+    uint16_t current_layer = get_highest_layer(layer_state);
+
+    if (COMBO_REF_MASK & (1U << current_layer)) {
+        return current_layer;
     }
+    return COMBO_REF_DEFAULT;
 }
 
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
