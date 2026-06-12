@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdint.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -335,9 +336,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 ((keycode & 0xFF) == KC_F16) ? MOD_LALT :
                 ((keycode & 0xFF) == KC_F17) ? MOD_LSFT : MOD_LCTL;
             uint16_t KC_EDIT = 0;
+            static uint16_t timer[3] = {0};
+            uint8_t idx = (keycode & 0xFF) - KC_F16;
 
             if (record->event.pressed) {
-                if (record->tap.count == 1) {
+                if (record->tap.count == 1
+                        && timer_elapsed(timer[idx]) > (QUICK_TAP_TERM << 2)) {
                     if (get_mods() & mod) {
                         unregister_mods(mod);
                     } else {
@@ -371,6 +375,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     tap_code(KC_EDIT);
                     set_mods(saved_mods);
                 }
+                timer[idx] = timer_read();
             }
             return false;
         case LT(0, KC_F19):
