@@ -23,16 +23,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define HOMEROW_MASK ((1U << 1) | (1U << 5))
 #define IS_HOMEROW(r) (HOMEROW_MASK & (1U << ((r)->event.key.row)))
 
-#define IS_HOMEROW_CAG(k, r) (          \
-    ((k) & (QK_LCTL|QK_LALT|QK_LGUI))   \
-    && IS_QK_MOD_TAP((k))               \
-    && IS_HOMEROW((r))                  \
+#define IS_HOMEROW_AG(k, r) (   \
+    ((k) & (QK_LALT|QK_LGUI))   \
+    && IS_QK_MOD_TAP((k))       \
+    && IS_HOMEROW((r))          \
 )
 
 #define IS_QUICK_SUCCESSION_INPUT(k1, r, k2) (          \
-    IS_HOMEROW_CAG((k1), (r))                           \
+    IS_HOMEROW_AG((k1), (r))                            \
     && QK_MOD_TAP_GET_TAP_KEYCODE((k2)) <= KC_Z         \
     && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
+)
+
+#define UNILATERAL_MASK(n, m) (                 \
+    (n) == 1 ? ((m) <= 1 ? 0x07 : 0x05) :       \
+    (n) == 5 ? ((m) <= 1 ? 0x70 : 0x50) : 0x00  \
+)
+#define IS_UNILATERAL_INPUT(r, i) (                         \
+    UNILATERAL_MASK((r)->event.key.row, (r)->event.key.col) \
+    & (1U << (i).event.key.row)                             \
 )
 
 typedef struct {
@@ -77,6 +86,18 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
     return true;
+}
+
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
+    if (IS_UNILATERAL_INPUT(record, inter_record)) {
+        tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
+
+        pressed_keys[tap.index] |= tap.bitmask;
+        record->tap.interrupted = false;
+        record->tap.count++;
+        return true;
+    }
+    return false;
 }
 
 typedef struct {

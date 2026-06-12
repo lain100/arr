@@ -281,8 +281,7 @@ ss	させ		DisplayAmbiguousResult
 ssrr	させられ		DisplayAmbiguousResult
 ssrrr	させられる
 sstm	させても
-st	して		DisplayAmbiguousResult
-sth	しては
+st	して
 str	している
 sn	しな		DisplayAmbiguousResult
 sncr	しなけれ		DisplayAmbiguousResult
