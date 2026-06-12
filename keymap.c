@@ -31,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define IS_QUICK_SUCCESSION_INPUT(k1, r, k2) (          \
     IS_HOMEROW_CAG((k1), (r))                           \
-    && QK_MOD_TAP_GET_TAP_KEYCODE((k1)) <= KC_Z         \
     && QK_MOD_TAP_GET_TAP_KEYCODE((k2)) <= KC_Z         \
     && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
 )
@@ -54,7 +53,8 @@ static keyrecord_t inter_record;
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (inter_keycode == LT(2, KC_SPC)) {
-        if (!record->event.pressed) {
+        if (keycode == inter_keycode
+            && !record->event.pressed) {
             inter_keycode = 0;
         }
         return true;
@@ -202,8 +202,7 @@ void roll_taps_processed(uint16_t keycode) {
 #define LAYER_CYCLE_END   4
 
 enum my_keycodes {
-    KC_LNGS = SAFE_RANGE,
-    MY_INT4,
+    MY_INT4 = SAFE_RANGE,
 };
 enum arrowkeys_types {
     TAB_MORPH = 1,
@@ -311,9 +310,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(0, KC_F16):
         case LT(0, KC_F17):
         case LT(0, KC_F18):
-            uint8_t mod  =  (keycode == LT(0, KC_F16)) ?
-                MOD_LALT : ((keycode == LT(0, KC_F17)) ?
-                MOD_LSFT : MOD_LCTL);
+            uint8_t mod =
+                ((keycode & 0xFF) == KC_F16) ? MOD_LALT :
+                ((keycode & 0xFF) == KC_F17) ? MOD_LSFT : MOD_LCTL;
             uint16_t KC_EDIT = 0;
 
             if (record->event.pressed) {
@@ -322,25 +321,25 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         unregister_mods(mod);
                     } else {
                         register_mods(mod);
-                        if (keycode == LT(0, KC_F16)) {
+                        if ((keycode & 0xFF) == KC_F16) {
                             tap_code(KC_TAB);
                         }
                     }
                 } else if (record->tap.count) {
-                    if (keycode == LT(0, KC_F16)) {
+                    if ((keycode & 0xFF) == KC_F16) {
                         tap_code(KC_ESC);
                         morph_type = WWW_MORPH;
-                    } else if (keycode == LT(0, KC_F17)) {
+                    } else if ((keycode & 0xFF) == KC_F17) {
                         KC_EDIT = KC_V;
                     } else {
                         morph_type = CTRL_TAB_MORPH;
                     }
                     unregister_mods(mod);
                 } else {
-                    if (keycode == LT(0, KC_F16)) {
+                    if ((keycode & 0xFF) == KC_F16) {
                         KC_EDIT = KC_C;
                     } else {
-                        tap_code((keycode == LT(0,KC_F17)) ? KC_F14 : KC_F16);
+                        tap_code(((keycode & 0xFF) == KC_F17) ? KC_F15 : KC_F16);
                     }
                 }
                 if (KC_EDIT) {
@@ -370,10 +369,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 layer_move(next_layer);
             }
             return false;
-        case LT(0, KC_LNGS):
+        case LT(0, KC_LNG1):
+        case LT(0, KC_LNG2):
             if (record->event.pressed) {
-                add_weak_mods(MOD_LALT);
-                tap_code(KC_GRAVE);
+                tap_code(((keycode & 0xFF) == KC_LNG2) ? KC_F13 : KC_F14);
                 if (record->tap.count) {
                     caps_word_off();
                 } else {
@@ -548,7 +547,8 @@ enum combos {
     CMB_APP,
     CMB_PSCR,
     CMB_INT4,
-    CMB_LNGS,
+    CMB_LNG1,
+    CMB_LNG2,
     CMB_MS_BTN1,
     CMB_MS_BTN2,
     CMB_MS_BTN3,
@@ -558,7 +558,8 @@ enum combos {
 const uint16_t PROGMEM cmb_app[]       = {KC_Z,         KC_M,         COMBO_END};
 const uint16_t PROGMEM cmb_pscr[]      = {KC_M,         KC_C,         COMBO_END};
 const uint16_t PROGMEM cmb_int4[]      = {KC_Z,         KC_C,         COMBO_END};
-const uint16_t PROGMEM cmb_lngs[]      = {LCTL_T(KC_S), KC_G,         COMBO_END};
+const uint16_t PROGMEM cmb_lng1[]      = {LCTL_T(KC_S), KC_G,         COMBO_END};
+const uint16_t PROGMEM cmb_lng2[]      = {KC_Y,         RCTL_T(KC_H), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn1[]   = {LSFT_T(KC_T), LCTL_T(KC_S), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn2[]   = {LALT_T(KC_R), LSFT_T(KC_T), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn3[]   = {LALT_T(KC_R), LCTL_T(KC_S), COMBO_END};
@@ -568,7 +569,8 @@ combo_t key_combos[] = {
     [CMB_APP]        = COMBO(cmb_app,       LT(0, KC_APP)),
     [CMB_PSCR]       = COMBO(cmb_pscr,      KC_PSCR),
     [CMB_INT4]       = COMBO(cmb_int4,      MY_INT4),
-    [CMB_LNGS]       = COMBO(cmb_lngs,      LT(0, KC_LNGS)),
+    [CMB_LNG1]       = COMBO(cmb_lng1,      LT(0, KC_LNG1)),
+    [CMB_LNG2]       = COMBO(cmb_lng2,      LT(0, KC_LNG2)),
     [CMB_MS_BTN1]    = COMBO(cmb_ms_btn1,   KC_MS_BTN1),
     [CMB_MS_BTN2]    = COMBO(cmb_ms_btn2,   KC_MS_BTN2),
     [CMB_MS_BTN3]    = COMBO(cmb_ms_btn3,   KC_MS_BTN3),
@@ -626,7 +628,8 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case LT(2, KC_SPC):
         case LT(4, KC_ENT):
         case LT(0, KC_APP):
-        case LT(0, KC_LNGS):
+        case LT(0, KC_LNG1):
+        case LT(0, KC_LNG2):
             return TAPPING_TERM + 50;
     }
     return TAPPING_TERM;

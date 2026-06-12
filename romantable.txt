@@ -300,7 +300,7 @@ km	かも
 kn	かな
 kd	けど
 nm	にも
-nh	のは
+nh	には
 nd	ので		DisplayAmbiguousResult
 ndsn	のですね
 ndsg	のですが
@@ -316,8 +316,7 @@ gt	がち
 tr	たら
 tm	ため
 th	とは		DisplayAmbiguousResult
-tc	てき		DisplayAmbiguousResult
-tcnh	てきには
+tc	てき
 td	ただ
 tb	たび
 ht	ひと
