@@ -16,6 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <stdint.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -35,9 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
 )
 
-#define UNILATERAL_MASK(n, m) (                 \
-    (n) == 1 ? ((m) <= 1 ? 0x07 : 0x05) :       \
-    (n) == 5 ? ((m) <= 1 ? 0x70 : 0x50) : 0x00  \
+#define UNILATERAL_MASK(n, m) ( \
+    (n) == 1 ? 0x07 :           \
+    (n) == 5 ? 0x70 : 0x00      \
 )
 #define IS_UNILATERAL_INPUT(r, i) (                         \
     UNILATERAL_MASK((r)->event.key.row, (r)->event.key.col) \
@@ -62,8 +63,8 @@ static keyrecord_t inter_record;
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (IS_QK_LAYER_TAP(keycode)) {
-    uint8_t layer_bit = (keycode >> 8) & 0x0F;
-    uint8_t n         = (layer_bit & 0x01) + (layer_bit & 0x02) + (layer_bit & 0x04);
+        uint8_t layer_bit = (keycode >> 8) & 0x0F;
+        uint8_t n         = (layer_bit & 0x01) + (layer_bit & 0x02) + (layer_bit & 0x04);
 
         if (record->event.pressed) {
             layer_on(n);
@@ -82,8 +83,9 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         inter_record  = *record;
     } else {
         tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
-
         if (pressed_keys[tap.index] & tap.bitmask) {
+            uint8_t mod = (keycode >> 8) & 0x1F;
+            unregister_mods((mod & 0x10) ? (mod << 4) : mod);
             pressed_keys[tap.index] &= ~tap.bitmask;
             record->tap.count++;
         }
@@ -94,7 +96,6 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
     if (IS_UNILATERAL_INPUT(record, inter_record)) {
         tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
-
         pressed_keys[tap.index] |= tap.bitmask;
         record->tap.interrupted = false;
         record->tap.count++;
@@ -105,14 +106,14 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 
 typedef struct {
     uint16_t keycode;
-    bool interrupted;
-    bool shifted;
+    bool     interrupted;
+    bool     shifted;
 } mt_t;
 
 typedef struct {
     uint16_t keycode;
-    uint8_t indexes[2];
-    uint8_t size;
+    uint8_t  indexes[2];
+    uint8_t  size;
 } rt_t;
 
 mt_t mts[] = {
@@ -142,7 +143,6 @@ void mts_mods_on(void) {
 
         if (mt->interrupted || mt->shifted) {
             uint8_t mod = (mt->keycode >> 8) & 0x1F;
-
             pending_mods |= (mod & 0x10) ? (mod << 4) : mod;
             mt->interrupted = false;
             mt->shifted = false;
@@ -164,7 +164,7 @@ void send_report_user(uint16_t keycode) {
         { 0,               0               },
     };
     static const uint8_t null_id = ARRAY_SIZE(brcts) - 1;
-    static uint8_t reception_id = null_id;
+    static uint8_t reception_id  = null_id;
 
     if (keycode == brcts[reception_id][1]) {
         del_weak_mods(MOD_LSFT);
@@ -194,15 +194,11 @@ void roll_taps_processed(uint16_t keycode) {
     static rt_t rts[] = {
         { LGUI_T(KC_N), { 1, 2 }, 2 },
         { LALT_T(KC_R), { 0, 3 }, 2 },
-        { LCTL_T(KC_S), { 1 }, 1 },
-        { RSFT_T(KC_A), { 6 }, 1 },
+        { LCTL_T(KC_S), { 1    }, 1 },
+        { RSFT_T(KC_A), { 6    }, 1 },
         { RALT_T(KC_E), { 5, 7 }, 2 },
-        { RGUI_T(KC_I), { 6 }, 1 },
-        { RALT_T(KC_0), { 8 }, 1 },
-        { KC_D, { 1, 3 }, 2 },
-        { KC_Z, { 1, 2 }, 2 },
-        { KC_C, { 1 }, 1 },
-        { KC_O, { 4 }, 1 },
+        { RGUI_T(KC_I), { 6    }, 1 },
+        { RALT_T(KC_0), { 8    }, 1 },
     };
 
     for (uint8_t i = 0; i < ARRAY_SIZE(rts); i++) {
@@ -222,9 +218,6 @@ void roll_taps_processed(uint16_t keycode) {
     }
 }
 
-#define LAYER_CYCLE_START 2
-#define LAYER_CYCLE_END   4
-
 enum my_keycodes {
     MY_INT4 = SAFE_RANGE,
 };
@@ -236,9 +229,9 @@ enum arrowkeys_types {
     CTRL_YanZ_MORPH,
     FOUR_MOVES_MORPH,
 };
-uint16_t morph_type = 0;
-uint16_t morph_code = 0;
-bool first_iteration = false;
+uint16_t morph_type       = 0;
+uint16_t morph_code       = 0;
+bool first_iteration      = false;
 bool arrowkeys_registered = false;
 
 void four_moves(uint16_t keycode) {
@@ -265,22 +258,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else {
                     bool *pending_state =
                         (record->tap.interrupted) ? &mt->interrupted : &mt->shifted;
-
                     *pending_state = true;
                     is_mod_pending = true;
                     return false;
                 }
             } else {
                 if (mt->shifted) {
-                    roll_taps_processed(keycode);
                     mt->shifted = false;
+                    roll_taps_processed(keycode);
                     mts_mods_on();
                     tap_code_attached(keycode, i > 7);
                     return false;
-                } else if (mt->interrupted) {
-                    uint8_t mod = (keycode >> 8) & 0x1F;
-
-                    unregister_mods((mod & 0x10) ? (mod << 4) : mod);
                 }
                 mt->interrupted = false;
             }
@@ -295,7 +283,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     return true;
                 }
                 report_mouse_t mouse_report = pointing_device_get_report();
-
                 mts_mods_on();
                 mouse_report.buttons |= MOUSE_BTN1 << (keycode - KC_MS_BTN1);
                 pointing_device_set_report(mouse_report);
@@ -326,7 +313,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 } else if (record->tap.count) {
                     morph_type = 0;
                     uint8_t saved_mods = get_mods();
-
                     del_mods(saved_mods);
                     add_weak_mods(MOD_LCTL);
                     tap_code(KC_X);
@@ -349,7 +335,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
             if (record->event.pressed) {
                 if (record->tap.count == 1
-                        && timer_elapsed(timer[idx]) > (QUICK_TAP_TERM << 2)) {
+                    && timer_elapsed(timer[idx]) > (QUICK_TAP_TERM << 2)) {
                     if (get_mods() & mod) {
                         unregister_mods(mod);
                     } else {
@@ -377,7 +363,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
                 if (KC_EDIT) {
                     uint8_t saved_mods = get_mods();
-
                     del_mods(saved_mods);
                     add_weak_mods(MOD_LCTL);
                     tap_code(KC_EDIT);
@@ -390,12 +375,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 morph_type =
                     record->tap.count == 1 ? TAB_MORPH :
-                    record->tap.count ? VOL_MORPH : FOUR_MOVES_MORPH;
+                    record->tap.count      ? VOL_MORPH : FOUR_MOVES_MORPH;
             }
             return false;
         case LT(0, KC_F20):
             if (record->event.pressed) {
-                layer_move(record->tap.count ? (get_highest_layer(layer_state) != 2 ? 2 : 4) : 1);
+                layer_move(record->tap.count ? (get_highest_layer(layer_state) == 2 ? 4 : 2) : 1);
             }
             return false;
         case LT(0, KC_LNG1):
@@ -464,18 +449,18 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     case CTRL_YanZ_MORPH:
                         clear_mods();
                         add_weak_mods(MOD_LCTL);
-                        morph_code = (keycode == KC_LEFT) ?
-                            KC_Z : KC_Y;
+                        morph_code =
+                            (keycode == KC_LEFT) ? KC_Z    : KC_Y;
                         break;
                     case VOL_MORPH:
-                        morph_code =   (keycode == KC_DOWN) ?
-                            KC_MUTE : ((keycode == KC_LEFT) ?
-                            KC_VOLD : KC_VOLU);
+                        morph_code =
+                            (keycode == KC_DOWN) ? KC_MUTE :
+                            (keycode == KC_LEFT) ? KC_VOLD : KC_VOLU;
                         break;
                     case WWW_MORPH:
-                        morph_code =   (keycode == KC_DOWN) ?
-                            KC_WHOM : ((keycode == KC_LEFT) ?
-                            KC_WBAK : KC_WFWD);
+                        morph_code =
+                            (keycode == KC_DOWN) ? KC_WHOM :
+                            (keycode == KC_LEFT) ? KC_WBAK : KC_WFWD;
                         break;
                     case FOUR_MOVES_MORPH:
                         four_moves(keycode);
@@ -496,10 +481,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case LT(3, KC_QUOT):
             static bool comm_registered = false;
             static bool quot_registered = false;
-            bool    *registered = (keycode == KC_COMM) ?
-                    &comm_registered : &quot_registered;
-            uint16_t KC_MORPH = (keycode == KC_COMM) ?
-                    KC_DOT : KC_DEL;
+            bool *registered  =
+                (keycode == KC_COMM) ? &comm_registered : &quot_registered;
+            uint16_t KC_MORPH =
+                (keycode == KC_COMM) ? KC_DOT : KC_DEL;
             uint8_t mod_state = get_mods();
 
             if (record->event.pressed) {
@@ -518,7 +503,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case LT(4, KC_ENT):
             static bool is_layer4_enabled = false;
-
             if (!record->tap.count) {
                 is_layer4_enabled = record->event.pressed;
             }
@@ -561,8 +545,8 @@ void matrix_scan_user(void) {
             arrowkeys_registered) {
         if (repeat_timer == 0) {
             repeat_timer = timer_read();
-        } else if (timer_elapsed(repeat_timer) > (first_iteration ?
-            REPEAT_DELAY : REPEAT_INTERVAL)) {
+        } else if (timer_elapsed(repeat_timer)
+                > (first_iteration ? REPEAT_DELAY : REPEAT_INTERVAL)) {
             four_moves(morph_code);
             first_iteration = false;
             repeat_timer = timer_read();
