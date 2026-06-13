@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <sys/types.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -41,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     (n) == 5 ? 0x70 : 0x00      \
 )
 #define IS_UNILATERAL_INPUT(r, i) (     \
-    UNILATERAL_MASK((r).event.key.row) \
+    UNILATERAL_MASK((r).event.key.row)  \
     & (1U << (i).event.key.row)         \
 )
 
@@ -110,12 +109,6 @@ typedef struct {
     bool     shifted;
 } mt_t;
 
-typedef struct {
-    uint16_t keycode;
-    uint8_t  indexes[2];
-    uint8_t  size;
-} rt_t;
-
 mt_t mts[] = {
     { LGUI_T(KC_N) },
     { LALT_T(KC_R) },
@@ -161,7 +154,7 @@ void send_report_user(uint16_t keycode) {
         { S(KC_COMM),      S(KC_DOT)       },
         { KC_LBRC,         KC_RBRC         },
         { KC_GRV,          KC_GRV          },
-        { 0,               0               },
+        { 0,               -1              },
     };
     static const uint8_t null_id = ARRAY_SIZE(brcts) - 1;
     static uint8_t reception_id  = null_id;
@@ -181,7 +174,6 @@ void send_report_user(uint16_t keycode) {
 
 void tap_code_attached(uint16_t keycode, bool shifted) {
     uint8_t saved_weak_mods = get_weak_mods();
-
     if (shifted || is_caps_word_on()) {
         add_weak_mods(MOD_LSFT);
     }
@@ -231,17 +223,18 @@ void four_moves(uint16_t keycode) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (layer_state_is(2)) {
-        caps_word_off();
-    }
+    bool is_layer2_on = IS_LAYER_ON(2);
 
     for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
         mt_t *mt = &mts[i];
 
         if (keycode == mt->keycode) {
+            if (is_layer2_on) {
+                caps_word_off();
+            }
             if (record->event.pressed) {
                 if (record->tap.count) {
-                    if (i > 7) {
+                    if (is_layer2_on) {
                         add_weak_mods(MOD_LSFT);
                     }
                     break;
@@ -257,9 +250,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 if (mt->shifted) {
                     mt->shifted = false;
-                    roll_taps_processed(keycode, *record);
                     mts_mods_on();
-                    tap_code_attached(keycode, i > 7);
+                    roll_taps_processed(keycode, *record);
+                    tap_code_attached(keycode, is_layer2_on);
                     return false;
                 }
                 mt->interrupted = false;
@@ -274,8 +267,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (!is_mod_pending) {
                     return true;
                 }
-                report_mouse_t mouse_report = pointing_device_get_report();
                 mts_mods_on();
+                report_mouse_t mouse_report = pointing_device_get_report();
                 mouse_report.buttons |= MOUSE_BTN1 << (keycode - KC_MS_BTN1);
                 pointing_device_set_report(mouse_report);
                 return false;
@@ -372,7 +365,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case LT(0, KC_F20):
             if (record->event.pressed) {
-                layer_move(record->tap.count ? (get_highest_layer(layer_state) == 2 ? 4 : 2) : 1);
+                layer_move(record->tap.count ? (get_highest_layer(layer_state) % 2 + 1) : 4);
             }
             return false;
         case LT(0, KC_LNG1):
@@ -587,8 +580,9 @@ bool caps_word_press_user(uint16_t keycode) {
             return true;
         case KC_1 ... KC_0:
         case KC_EQL:
-        case KC_SLSH:
+        case KC_DEL:
         case KC_BSPC:
+        case KC_SLSH:
         case KC_MINS:
         case S(KC_MINS):
             return true;
@@ -601,7 +595,6 @@ bool caps_word_press_user(uint16_t keycode) {
 
 uint8_t combo_ref_from_layer(uint8_t layer) {
     uint16_t current_layer = get_highest_layer(layer_state);
-
     if (COMBO_REF_MASK & (1U << current_layer)) {
         return current_layer;
     }
