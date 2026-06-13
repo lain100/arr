@@ -584,7 +584,6 @@ enum combos {
     CMB_MS_BTN1,
     CMB_MS_BTN2,
     CMB_MS_BTN3,
-    CMB_CAPS_WORD,
 };
 
 const uint16_t PROGMEM cmb_app[]       = {KC_Z,         KC_M,         COMBO_END};
@@ -595,7 +594,6 @@ const uint16_t PROGMEM cmb_lng2[]      = {KC_Y,         RCTL_T(KC_H), COMBO_END}
 const uint16_t PROGMEM cmb_ms_btn1[]   = {LSFT_T(KC_T), LCTL_T(KC_S), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn2[]   = {LALT_T(KC_R), LSFT_T(KC_T), COMBO_END};
 const uint16_t PROGMEM cmb_ms_btn3[]   = {LALT_T(KC_R), LCTL_T(KC_S), COMBO_END};
-const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_T), RSFT_T(KC_A), COMBO_END};
 
 combo_t key_combos[] = {
     [CMB_APP]        = COMBO(cmb_app,       LT(0, KC_APP)),
@@ -606,16 +604,7 @@ combo_t key_combos[] = {
     [CMB_MS_BTN1]    = COMBO(cmb_ms_btn1,   KC_MS_BTN1),
     [CMB_MS_BTN2]    = COMBO(cmb_ms_btn2,   KC_MS_BTN2),
     [CMB_MS_BTN3]    = COMBO(cmb_ms_btn3,   KC_MS_BTN3),
-    [CMB_CAPS_WORD]  = COMBO(cmb_caps_word, QK_CAPS_WORD_TOGGLE),
 };
-
-bool get_combo_must_hold(uint16_t combo_index, combo_t *combo) {
-    switch (combo_index) {
-        case CMB_CAPS_WORD:
-            return true;
-    }
-    return false;
-}
 
 bool caps_word_press_user(uint16_t keycode) {
     switch (keycode) {
@@ -663,7 +652,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case LT(2, KC_SPC):
         case LT(3, KC_QUOT):
         case LT(4, KC_ENT):
-            return TAPPING_TERM + 50;
+            return TAPPING_TERM << 1;
     }
     return TAPPING_TERM;
 }
@@ -672,7 +661,6 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT(0, KC_F20):
         case LT(2, KC_SPC):
-        case LT(3, KC_QUOT):
         case LT(4, KC_ENT):
             return 0;
     }
