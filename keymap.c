@@ -62,11 +62,8 @@ static keyrecord_t inter_record;
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (IS_QK_LAYER_TAP(keycode)) {
-        uint16_t layer_bit = (keycode >> 8) & 0x0F;
-        uint16_t n =
-              ((layer_bit & 0x01) ? 1 : 0)
-            + ((layer_bit & 0x02) ? 2 : 0)
-            + ((layer_bit & 0x04) ? 4 : 0);
+    uint8_t layer_bit = (keycode >> 8) & 0x0F;
+    uint8_t n         = (layer_bit & 0x01) + (layer_bit & 0x02) + (layer_bit & 0x04);
 
         if (record->event.pressed) {
             layer_on(n);
@@ -251,6 +248,10 @@ void four_moves(uint16_t keycode) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (layer_state_is(2)) {
+        caps_word_off();
+    }
+
     for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
         mt_t *mt = &mts[i];
 
@@ -258,9 +259,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 if (record->tap.count) {
                     if (i > 7) {
-                        if (is_caps_word_on()) {
-                            caps_word_off();
-                        }
                         add_weak_mods(MOD_LSFT);
                     }
                     break;
@@ -274,14 +272,15 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             } else {
                 if (mt->shifted) {
-                    if (i > 7 && is_caps_word_on()) {
-                        caps_word_off();
-                    }
                     roll_taps_processed(keycode);
                     mt->shifted = false;
                     mts_mods_on();
                     tap_code_attached(keycode, i > 7);
                     return false;
+                } else if (mt->interrupted) {
+                    uint8_t mod = (keycode >> 8) & 0x1F;
+
+                    unregister_mods((mod & 0x10) ? (mod << 4) : mod);
                 }
                 mt->interrupted = false;
             }
