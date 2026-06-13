@@ -69,6 +69,13 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
         return true;
     }
+    if (keycode == LT(4, KC_ENT)) {
+        if (record->event.pressed) {
+            layer_on(4);
+        } else {
+            layer_off(4);
+        }
+    }
     if (record->event.pressed) {
         if (IS_QUICK_SUCCESSION_INPUT(keycode, record, inter_keycode)) {
             tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
@@ -260,8 +267,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     }
                     break;
                 } else {
-                    bool *pending_state = (record->tap.interrupted) ?
-                        &mt->interrupted : &mt->shifted;
+                    bool *pending_state =
+                        (record->tap.interrupted) ? &mt->interrupted : &mt->shifted;
 
                     *pending_state = true;
                     is_mod_pending = true;
@@ -304,9 +311,13 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     switch (keycode) {
         case LT(0, KC_APP):
-            if (record->event.pressed &&
-                    !record->tap.count) {
-                add_weak_mods(MOD_LCTL);
+        case LT(0, KC_PSCR):
+            uint8_t weak_mod =
+                ((keycode & 0xFF) == KC_APP) ? MOD_LALT : MOD_LCTL;
+
+            if (record->event.pressed
+                && !record->tap.count) {
+                add_weak_mods(weak_mod);
                 tap_code(KC_PSCR);
                 return false;
             }
@@ -380,19 +391,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return false;
         case LT(0, KC_F19):
             if (record->event.pressed) {
-                morph_type = record->tap.count == 1 ?
-                    TAB_MORPH : (record->tap.count ? VOL_MORPH : FOUR_MOVES_MORPH);
+                morph_type =
+                    record->tap.count == 1 ? TAB_MORPH :
+                    record->tap.count ? VOL_MORPH : FOUR_MOVES_MORPH;
             }
             return false;
         case LT(0, KC_F20):
-            static uint16_t length = LAYER_CYCLE_END - LAYER_CYCLE_START + 1;
-
             if (record->event.pressed) {
-                uint16_t offset_cur = get_highest_layer(layer_state) - LAYER_CYCLE_START;
-                uint16_t next_layer = record->tap.count ?
-                    LAYER_CYCLE_START + ((offset_cur + 1) % length + length) % length : 1;
-
-                layer_move(next_layer);
+                layer_move(record->tap.count ? (get_highest_layer(layer_state) != 2 ? 2 : 4) : 1);
             }
             return false;
         case LT(0, KC_LNG1):
@@ -489,14 +495,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return false;
             }
             break;
-        case KC_QUOT:
         case KC_COMM:
-            static bool quot_registered = false;
+        case LT(3, KC_QUOT):
             static bool comm_registered = false;
-            bool    *registered = (keycode == KC_QUOT) ?
-                    &quot_registered : &comm_registered;
-            uint16_t KC_MORPH = (keycode == KC_QUOT) ?
-                    KC_DEL : KC_DOT;
+            static bool quot_registered = false;
+            bool    *registered = (keycode == KC_COMM) ?
+                    &comm_registered : &quot_registered;
+            uint16_t KC_MORPH = (keycode == KC_COMM) ?
+                    KC_DOT : KC_DEL;
             uint8_t mod_state = get_mods();
 
             if (record->event.pressed) {
@@ -593,7 +599,7 @@ const uint16_t PROGMEM cmb_caps_word[] = {LSFT_T(KC_T), RSFT_T(KC_A), COMBO_END}
 
 combo_t key_combos[] = {
     [CMB_APP]        = COMBO(cmb_app,       LT(0, KC_APP)),
-    [CMB_PSCR]       = COMBO(cmb_pscr,      KC_PSCR),
+    [CMB_PSCR]       = COMBO(cmb_pscr,      LT(0, KC_PSCR)),
     [CMB_INT4]       = COMBO(cmb_int4,      MY_INT4),
     [CMB_LNG1]       = COMBO(cmb_lng1,      LT(0, KC_LNG1)),
     [CMB_LNG2]       = COMBO(cmb_lng2,      LT(0, KC_LNG2)),
@@ -651,11 +657,12 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT(0, KC_F20):
-        case LT(2, KC_SPC):
-        case LT(4, KC_ENT):
         case LT(0, KC_APP):
         case LT(0, KC_LNG1):
         case LT(0, KC_LNG2):
+        case LT(2, KC_SPC):
+        case LT(3, KC_QUOT):
+        case LT(4, KC_ENT):
             return TAPPING_TERM + 50;
     }
     return TAPPING_TERM;
@@ -665,6 +672,7 @@ uint16_t get_quick_tap_term(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT(0, KC_F20):
         case LT(2, KC_SPC):
+        case LT(3, KC_QUOT):
         case LT(4, KC_ENT):
             return 0;
     }
@@ -721,8 +729,8 @@ KC_LNG2),KC_RALT,KC_RGUI, KC_RSFT
 // clang-format on
 
 layer_state_t layer_state_set_user(layer_state_t state) {
-    // Auto enable scroll mode when the highest layer is 3
-    keyball_set_scroll_mode(get_highest_layer(state) == 3);
+    // Auto enable scroll mode when the highest layer is 4
+    keyball_set_scroll_mode(get_highest_layer(state) == 4);
 #ifdef POINTING_DEVICE_AUTO_MOUSE_ENABLE
     keyball_handle_auto_mouse_layer_change(state);
 #endif

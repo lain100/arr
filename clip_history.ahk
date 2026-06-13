@@ -114,11 +114,9 @@ InitListView(row, height) {
         switch wParam {
           case 0x08: SendEvent("{BS}")
           case 0x0D:
-			GetKeyState("Ctrl", "P") ? (showEdit.Text := "") showEdit.Focus() : lv.Focus()
-		  case 0x25: PageNext(lv, -1)
-          case 0x26: ChangeFocus(lv, -1)
-		  case 0x27: PageNext(lv, 1)
-          case 0x28: ChangeFocus(lv, 1)
+			GetKeyState("Ctrl", "P") ? (showEdit.Text := "") showEdit.Focus() : CopyItem(lv)
+          case 0x26: ChangeFocus(lv, -1)    lv.Focus()
+          case 0x28: ChangeFocus(lv, 1)     lv.Focus()
           default:
             return ""
         }
