@@ -16,7 +16,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
+#include <sys/types.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -36,13 +36,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
 )
 
-#define UNILATERAL_MASK(n, m) ( \
+#define UNILATERAL_MASK(n) (    \
     (n) == 1 ? 0x07 :           \
     (n) == 5 ? 0x70 : 0x00      \
 )
-#define IS_UNILATERAL_INPUT(r, i) (                         \
-    UNILATERAL_MASK((r)->event.key.row, (r)->event.key.col) \
-    & (1U << (i).event.key.row)                             \
+#define IS_UNILATERAL_INPUT(r, i) (     \
+    UNILATERAL_MASK((r).event.key.row) \
+    & (1U << (i).event.key.row)         \
 )
 
 typedef struct {
@@ -65,7 +65,6 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (IS_QK_LAYER_TAP(keycode)) {
         uint8_t layer_bit = (keycode >> 8) & 0x0F;
         uint8_t n         = (layer_bit & 0x01) + (layer_bit & 0x02) + (layer_bit & 0x04);
-
         if (record->event.pressed) {
             layer_on(n);
         } else {
@@ -83,6 +82,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         inter_record  = *record;
     } else {
         tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
+
         if (pressed_keys[tap.index] & tap.bitmask) {
             uint8_t mod = (keycode >> 8) & 0x1F;
             unregister_mods((mod & 0x10) ? (mod << 4) : mod);
@@ -94,7 +94,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
-    if (IS_UNILATERAL_INPUT(record, inter_record)) {
+    if (IS_UNILATERAL_INPUT(*record, inter_record)) {
         tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
         pressed_keys[tap.index] |= tap.bitmask;
         record->tap.interrupted = false;
@@ -190,30 +190,20 @@ void tap_code_attached(uint16_t keycode, bool shifted) {
     send_report_user(keycode);
 }
 
-void roll_taps_processed(uint16_t keycode) {
-    static rt_t rts[] = {
-        { LGUI_T(KC_N), { 1, 2 }, 2 },
-        { LALT_T(KC_R), { 0, 3 }, 2 },
-        { LCTL_T(KC_S), { 1    }, 1 },
-        { RSFT_T(KC_A), { 6    }, 1 },
-        { RALT_T(KC_E), { 5, 7 }, 2 },
-        { RGUI_T(KC_I), { 6    }, 1 },
-        { RALT_T(KC_0), { 8    }, 1 },
-    };
+static uint16_t    prev_key = 0;
+static keyrecord_t prev_rec = {0};
 
-    for (uint8_t i = 0; i < ARRAY_SIZE(rts); i++) {
-        if (keycode == rts[i].keycode) {
-            for (uint8_t j = 0; j < rts[i].size; j++) {
-                mt_t *mt = &mts[rts[i].indexes[j]];
-
-                if (mt->interrupted || mt->shifted) {
-                    tap_code_attached(mt->keycode, keycode == RALT_T(KC_0));
-                    mt->interrupted = false;
-                    mt->shifted = false;
-                    break;
-                }
+void roll_taps_processed(uint16_t keycode, keyrecord_t record) {
+    if (IS_UNILATERAL_INPUT(prev_rec, record)) {
+        for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
+            mt_t *mt = &mts[i];
+            if ((prev_key == mt->keycode)
+                && (mt->interrupted || mt->shifted)) {
+                tap_code_attached(prev_key, keycode == RALT_T(KC_0));
+                mt->interrupted = false;
+                mt->shifted = false;
+                return;
             }
-            return;
         }
     }
 }
@@ -260,12 +250,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                         (record->tap.interrupted) ? &mt->interrupted : &mt->shifted;
                     *pending_state = true;
                     is_mod_pending = true;
+                    prev_key = keycode;
+                    prev_rec = *record;
                     return false;
                 }
             } else {
                 if (mt->shifted) {
                     mt->shifted = false;
-                    roll_taps_processed(keycode);
+                    roll_taps_processed(keycode, *record);
                     mts_mods_on();
                     tap_code_attached(keycode, i > 7);
                     return false;
@@ -290,7 +282,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
     }
 
-    roll_taps_processed(keycode);
+    roll_taps_processed(keycode, *record);
     mts_mods_on();
 
     switch (keycode) {
