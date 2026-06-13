@@ -24,14 +24,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define HOMEROW_MASK ((1U << 1) | (1U << 5))
 #define IS_HOMEROW(r) (HOMEROW_MASK & (1U << ((r)->event.key.row)))
 
-#define IS_HOMEROW_AG(k, r) (   \
-    ((k) & (QK_LALT|QK_LGUI))   \
-    && IS_QK_MOD_TAP((k))       \
-    && IS_HOMEROW((r))          \
+#define IS_HOMEROW_CAG(k, r) (              \
+    ((k) & ((MOD_HYPR & ~MOD_LSFT) << 8))   \
+    && IS_QK_MOD_TAP((k))                   \
+    && IS_HOMEROW((r))                      \
 )
 
 #define IS_QUICK_SUCCESSION_INPUT(k1, r, k2) (          \
-    IS_HOMEROW_AG((k1), (r))                            \
+    IS_HOMEROW_CAG((k1), (r))                           \
     && QK_MOD_TAP_GET_TAP_KEYCODE((k2)) <= KC_Z         \
     && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
 )
@@ -62,18 +62,17 @@ static uint16_t    inter_keycode;
 static keyrecord_t inter_record;
 
 bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
-    if (inter_keycode == LT(2, KC_SPC)) {
-        if (keycode == inter_keycode
-            && !record->event.pressed) {
-            inter_keycode = 0;
-        }
-        return true;
-    }
-    if (keycode == LT(4, KC_ENT)) {
+    if (IS_QK_LAYER_TAP(keycode)) {
+        uint16_t layer_bit = (keycode >> 8) & 0x0F;
+        uint16_t n =
+              ((layer_bit & 0x01) ? 1 : 0)
+            + ((layer_bit & 0x02) ? 2 : 0)
+            + ((layer_bit & 0x04) ? 4 : 0);
+
         if (record->event.pressed) {
-            layer_on(4);
+            layer_on(n);
         } else {
-            layer_off(4);
+            layer_off(n);
         }
     }
     if (record->event.pressed) {
