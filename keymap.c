@@ -16,7 +16,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdint.h>
 #include QMK_KEYBOARD_H
 
 #include "quantum.h"
@@ -643,15 +642,8 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 }
 
 uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-        case LT(0, KC_F20):
-        case LT(0, KC_APP):
-        case LT(0, KC_LNG1):
-        case LT(0, KC_LNG2):
-        case LT(2, KC_SPC):
-        case LT(3, KC_QUOT):
-        case LT(4, KC_ENT):
-            return TAPPING_TERM << 1;
+    if (IS_QK_LAYER_TAP(keycode)) {
+        return TAPPING_TERM << 1;
     }
     return TAPPING_TERM;
 }
