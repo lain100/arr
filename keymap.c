@@ -21,7 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "quantum.h"
 
 #define HOMEROW_MASK ((1U << 1) | (1U << 5))
-#define IS_HOMEROW(r) (HOMEROW_MASK & (1U << ((r)->event.key.row)))
+#define IS_HOMEROW(r) (HOMEROW_MASK & (1U << ((r).event.key.row)))
+
+#define IS_HOMEROW_AG(k, r) (   \
+    ((k) & (QK_LALT | QK_LGUI)) \
+    && IS_QK_MOD_TAP((k))       \
+    && IS_HOMEROW((r))          \
+)
 
 #define IS_HOMEROW_CAG(k, r) (              \
     ((k) & ((MOD_HYPR & ~MOD_LSFT) << 8))   \
@@ -71,7 +77,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
     if (record->event.pressed) {
-        if (IS_QUICK_SUCCESSION_INPUT(keycode, record, inter_keycode)) {
+        if (IS_QUICK_SUCCESSION_INPUT(keycode, *record, inter_keycode)) {
             tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
             pressed_keys[tap.index] |= tap.bitmask;
             record->keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
@@ -185,13 +191,15 @@ void tap_code_attached(uint16_t keycode, bool shifted) {
 static uint16_t    prev_key = 0;
 static keyrecord_t prev_rec = {0};
 
-void roll_taps_processed(uint16_t keycode, keyrecord_t record) {
-    if (IS_UNILATERAL_INPUT(prev_rec, record)) {
+void roll_taps_processed(void) {
+    if (IS_UNILATERAL_INPUT(prev_rec, inter_record)
+        || (IS_HOMEROW_AG(prev_key, prev_rec)
+            && IS_QUICK_SUCCESSION_INPUT(inter_keycode, inter_record, prev_key))) {
         for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
             mt_t *mt = &mts[i];
             if ((prev_key == mt->keycode)
                 && (mt->interrupted || mt->shifted)) {
-                tap_code_attached(prev_key, keycode == RALT_T(KC_0));
+                tap_code_attached(prev_key, prev_key == RCTL_T(KC_9));
                 mt->interrupted = false;
                 mt->shifted = false;
                 return;
@@ -223,12 +231,11 @@ void four_moves(uint16_t keycode) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    bool is_layer2_on = IS_LAYER_ON(2);
-
     for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
         mt_t *mt = &mts[i];
 
         if (keycode == mt->keycode) {
+            bool is_layer2_on = IS_LAYER_ON(2);
             if (is_layer2_on) {
                 caps_word_off();
             }
@@ -251,7 +258,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (mt->shifted) {
                     mt->shifted = false;
                     mts_mods_on();
-                    roll_taps_processed(keycode, *record);
+                    roll_taps_processed();
                     tap_code_attached(keycode, is_layer2_on);
                     return false;
                 }
@@ -275,7 +282,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             }
     }
 
-    roll_taps_processed(keycode, *record);
+    roll_taps_processed();
     mts_mods_on();
 
     switch (keycode) {
