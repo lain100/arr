@@ -188,7 +188,8 @@ static keyrecord_t prev_rec = {0};
 void roll_taps_processed(void) {
     if (IS_UNILATERAL_INPUT(prev_rec, inter_record)
         || (IS_HOMEROW(prev_key, prev_rec, MOD_LALT | MOD_LGUI)
-            && IS_QUICK_SUCCESSION_INPUT(inter_keycode, inter_record, prev_key, MOD_HYPR))) {
+            && IS_QUICK_SUCCESSION_INPUT(inter_keycode, inter_record, prev_key, MOD_HYPR))
+        || (prev_key == RCTL_T(KC_9) && inter_keycode == RALT_T(KC_0))) {
         for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
             mt_t *mt = &mts[i];
             if ((prev_key == mt->keycode)
