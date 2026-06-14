@@ -21,22 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "quantum.h"
 
 #define HOMEROW_MASK ((1U << 1) | (1U << 5))
-#define IS_HOMEROW(r) (HOMEROW_MASK & (1U << ((r).event.key.row)))
-
-#define IS_HOMEROW_AG(k, r) (   \
-    ((k) & (QK_LALT | QK_LGUI)) \
-    && IS_QK_MOD_TAP((k))       \
-    && IS_HOMEROW((r))          \
+#define IS_HOMEROW(k, r, m) (                       \
+    (HOMEROW_MASK & (1U << ((r).event.key.row)))    \
+    && IS_QK_MOD_TAP((k))                           \
+    && (((k) >> 8) & (m))                           \
 )
 
-#define IS_HOMEROW_CAG(k, r) (              \
-    ((k) & ((MOD_HYPR & ~MOD_LSFT) << 8))   \
-    && IS_QK_MOD_TAP((k))                   \
-    && IS_HOMEROW((r))                      \
-)
-
-#define IS_QUICK_SUCCESSION_INPUT(k1, r, k2) (          \
-    IS_HOMEROW_CAG((k1), (r))                           \
+#define IS_QUICK_SUCCESSION_INPUT(k1, r, k2, m) (       \
+    IS_HOMEROW((k1), (r), (m))                          \
     && QK_MOD_TAP_GET_TAP_KEYCODE((k2)) <= KC_Z         \
     && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
 )
@@ -77,7 +69,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
     if (record->event.pressed) {
-        if (IS_QUICK_SUCCESSION_INPUT(keycode, *record, inter_keycode)) {
+        if (IS_QUICK_SUCCESSION_INPUT(keycode, *record, inter_keycode, MOD_HYPR & ~MOD_LSFT)) {
             tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
             pressed_keys[tap.index] |= tap.bitmask;
             record->keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
@@ -193,8 +185,8 @@ static keyrecord_t prev_rec = {0};
 
 void roll_taps_processed(void) {
     if (IS_UNILATERAL_INPUT(prev_rec, inter_record)
-        || (IS_HOMEROW_AG(prev_key, prev_rec)
-            && IS_QUICK_SUCCESSION_INPUT(inter_keycode, inter_record, prev_key))) {
+        || (IS_HOMEROW(prev_key, prev_rec, MOD_LALT | MOD_LGUI)
+            && IS_QUICK_SUCCESSION_INPUT(inter_keycode, inter_record, prev_key, MOD_HYPR))) {
         for (uint8_t i = 0; i < ARRAY_SIZE(mts); i++) {
             mt_t *mt = &mts[i];
             if ((prev_key == mt->keycode)
@@ -533,8 +525,8 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 void matrix_scan_user(void) {
     static uint16_t repeat_timer = 0;
 
-    if (morph_type == FOUR_MOVES_MORPH &&
-            arrowkeys_registered) {
+    if (morph_type == FOUR_MOVES_MORPH
+        && arrowkeys_registered) {
         if (repeat_timer == 0) {
             repeat_timer = timer_read();
         } else if (timer_elapsed(repeat_timer)
