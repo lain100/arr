@@ -33,13 +33,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     && last_matrix_activity_elapsed() <= QUICK_TAP_TERM \
 )
 
-#define UNILATERAL_MASK(n) (    \
-    (n) == 1 ? 0x07 :           \
-    (n) == 5 ? 0x70 : 0x00      \
+#define UNILATERAL_MASK(n)( \
+    (n) == 1 ? 0x05 :       \
+    (n) == 5 ? 0x50 : 0x00  \
 )
-#define IS_UNILATERAL_INPUT(r, i) (     \
-    UNILATERAL_MASK((r).event.key.row)  \
-    & (1U << (i).event.key.row)         \
+
+#define UNILATERAL_MASK_ROW(n)( \
+    (n) == 1 ? 0x02 :           \
+    (n) == 5 ? 0x20 : 0x00      \
+)
+
+#define UNILATERAL_MASK_COL(n)( \
+    (n) == 2 ? 0x17 :           \
+    (n) == 3 ? 0x1B : 0xFF      \
+)
+
+#define IS_UNILATERAL_INPUT(r, i) (             \
+    ((UNILATERAL_MASK((r).event.key.row))       \
+        & (1U << (i).event.key.row))            \
+    || ((UNILATERAL_MASK_ROW((r).event.key.row) \
+        & (1U << (i).event.key.row))            \
+    && ((UNILATERAL_MASK_COL((r).event.key.col) \
+        & (1U << (i).event.key.col))))          \
 )
 
 typedef struct {
@@ -69,7 +84,7 @@ bool pre_process_record_user(uint16_t keycode, keyrecord_t *record) {
         }
     }
     if (record->event.pressed) {
-        if (IS_QUICK_SUCCESSION_INPUT(keycode, *record, inter_keycode, MOD_HYPR & ~MOD_LSFT)) {
+        if (IS_QUICK_SUCCESSION_INPUT(keycode, *record, inter_keycode, MOD_LALT | MOD_LGUI)) {
             tap_bit_t tap = TAP_BIT_FROM_KEYCODE(keycode);
             pressed_keys[tap.index] |= tap.bitmask;
             record->keycode = QK_MOD_TAP_GET_TAP_KEYCODE(keycode);
